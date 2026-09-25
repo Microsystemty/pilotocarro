@@ -10,33 +10,114 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as EstoqueRouteImport } from './routes/estoque'
+import { Route as FinanciamentoRouteImport } from './routes/financiamento'
+import { Route as VendaSeuCarroRouteImport } from './routes/venda-seu-carro'
+import { Route as EstoqueSlugRouteImport } from './routes/estoque.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueRoute = EstoqueRouteImport.update({
+  id: '/estoque',
+  path: '/estoque',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanciamentoRoute = FinanciamentoRouteImport.update({
+  id: '/financiamento',
+  path: '/financiamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendaSeuCarroRoute = VendaSeuCarroRouteImport.update({
+  id: '/venda-seu-carro',
+  path: '/venda-seu-carro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstoqueSlugRoute = EstoqueSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EstoqueRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contato': typeof ContatoRoute
+  '/estoque': typeof EstoqueRouteWithChildren
+  '/financiamento': typeof FinanciamentoRoute
+  '/venda-seu-carro': typeof VendaSeuCarroRoute
+  '/estoque/$slug': typeof EstoqueSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contato': typeof ContatoRoute
+  '/estoque': typeof EstoqueRouteWithChildren
+  '/financiamento': typeof FinanciamentoRoute
+  '/venda-seu-carro': typeof VendaSeuCarroRoute
+  '/estoque/$slug': typeof EstoqueSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contato': typeof ContatoRoute
+  '/estoque': typeof EstoqueRouteWithChildren
+  '/financiamento': typeof FinanciamentoRoute
+  '/venda-seu-carro': typeof VendaSeuCarroRoute
+  '/estoque/$slug': typeof EstoqueSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/contato'
+    | '/estoque'
+    | '/financiamento'
+    | '/venda-seu-carro'
+    | '/estoque/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/contato'
+    | '/estoque'
+    | '/financiamento'
+    | '/venda-seu-carro'
+    | '/estoque/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/contato'
+    | '/estoque'
+    | '/financiamento'
+    | '/venda-seu-carro'
+    | '/estoque/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ContatoRoute: typeof ContatoRoute
+  EstoqueRoute: typeof EstoqueRouteWithChildren
+  FinanciamentoRoute: typeof FinanciamentoRoute
+  VendaSeuCarroRoute: typeof VendaSeuCarroRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +129,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque': {
+      id: '/estoque'
+      path: '/estoque'
+      fullPath: '/estoque'
+      preLoaderRoute: typeof EstoqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financiamento': {
+      id: '/financiamento'
+      path: '/financiamento'
+      fullPath: '/financiamento'
+      preLoaderRoute: typeof FinanciamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/venda-seu-carro': {
+      id: '/venda-seu-carro'
+      path: '/venda-seu-carro'
+      fullPath: '/venda-seu-carro'
+      preLoaderRoute: typeof VendaSeuCarroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estoque/$slug': {
+      id: '/estoque/$slug'
+      path: '/$slug'
+      fullPath: '/estoque/$slug'
+      preLoaderRoute: typeof EstoqueSlugRouteImport
+      parentRoute: typeof EstoqueRoute
+    }
   }
 }
 
+interface EstoqueRouteChildren {
+  EstoqueSlugRoute: typeof EstoqueSlugRoute
+}
+
+const EstoqueRouteChildren: EstoqueRouteChildren = {
+  EstoqueSlugRoute: EstoqueSlugRoute,
+}
+
+const EstoqueRouteWithChildren =
+  EstoqueRoute._addFileChildren(EstoqueRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ContatoRoute: ContatoRoute,
+  EstoqueRoute: EstoqueRouteWithChildren,
+  FinanciamentoRoute: FinanciamentoRoute,
+  VendaSeuCarroRoute: VendaSeuCarroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
