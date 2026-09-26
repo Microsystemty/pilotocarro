@@ -476,21 +476,30 @@
   background: oklch(0.08 0.008 25 / 72%);
   padding: 0.85rem 0;
   backdrop-filter: blur(10px);
+  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
 }
 
 .hero-ticker__track {
   display: flex;
   width: max-content;
   align-items: center;
-  gap: 2rem;
   color: oklch(0.94 0.01 40 / 70%);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.18em;
-  animation: ticker-scroll 22s linear infinite;
+  animation: ticker-scroll 18s linear infinite;
+  will-change: transform;
 }
 
-.hero-ticker__track i {
+.hero-ticker__group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+}
+
+.hero-ticker__group i {
   width: 0.35rem;
   height: 0.35rem;
   border-radius: 50%;
@@ -571,8 +580,7 @@
   .car-showcase,
   .car-showcase__vehicle,
   .car-showcase__speed-lines span,
-  .car-showcase__road span,
-  .hero-ticker__track {
+  .car-showcase__road span {
     animation: none !important;
   }
   .vehicle-card-premium::after {

@@ -108,22 +108,18 @@ function Index() {
         </div>
         <div className="hero-ticker" aria-hidden="true">
           <div className="hero-ticker__track">
-            <span>COMPRA SEGURA</span>
-            <i />
-            <span>VEÍCULOS SELECIONADOS</span>
-            <i />
-            <span>FINANCIAMENTO</span>
-            <i />
-            <span>AVALIAÇÃO JUSTA</span>
-            <i />
-            <span>COMPRA SEGURA</span>
-            <i />
-            <span>VEÍCULOS SELECIONADOS</span>
-            <i />
-            <span>FINANCIAMENTO</span>
-            <i />
-            <span>AVALIAÇÃO JUSTA</span>
-            <i />
+            {[0, 1].map((group) => (
+              <div className="hero-ticker__group" key={group}>
+                <span>COMPRA SEGURA</span>
+                <i />
+                <span>VEÍCULOS SELECIONADOS</span>
+                <i />
+                <span>FINANCIAMENTO</span>
+                <i />
+                <span>AVALIAÇÃO JUSTA</span>
+                <i />
+              </div>
+            ))}
           </div>
         </div>
       </section>
