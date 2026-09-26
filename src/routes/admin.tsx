@@ -127,6 +127,7 @@ const emptyForm: VehicleForm = {
 function vehicleToForm(vehicle: Vehicle): VehicleForm {
   return {
     ...vehicle,
+    body: vehicle.body === "Sedan" ? "Sedã" : vehicle.body === "Pickup" ? "Picape" : vehicle.body,
     gallery: vehicle.gallery.length ? vehicle.gallery : [vehicle.image],
     highlights: vehicle.highlights.join(", "),
     details: vehicle.details ?? [],
@@ -338,11 +339,19 @@ function VehicleFormDialog({
               />
             </FormField>
             <FormField label="Câmbio" required>
-              <Input
+              <Select
                 value={form.transmission}
-                onChange={(event) => update("transmission", event.target.value)}
-                required
-              />
+                onValueChange={(value) => update("transmission", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Automático">Automático</SelectItem>
+                  <SelectItem value="Manual">Manual</SelectItem>
+                  <SelectItem value="Semi-Automático">Semi-Automático</SelectItem>
+                </SelectContent>
+              </Select>
             </FormField>
             <FormField label="Combustível" required>
               <Select value={form.fuel} onValueChange={(value) => update("fuel", value)}>
@@ -373,12 +382,19 @@ function VehicleFormDialog({
               </Select>
             </FormField>
             <FormField label="Categoria" required>
-              <Input
-                value={form.body}
-                onChange={(event) => update("body", event.target.value)}
-                placeholder="SUV, Sedan, Pickup..."
-                required
-              />
+              <Select value={form.body} onValueChange={(value) => update("body", value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Hatchback">Hatchback</SelectItem>
+                  <SelectItem value="Sedã">Sedã</SelectItem>
+                  <SelectItem value="SUV">SUV</SelectItem>
+                  <SelectItem value="Picape">Picape</SelectItem>
+                  <SelectItem value="Perua">Perua</SelectItem>
+                  <SelectItem value="Coupé">Coupé</SelectItem>
+                </SelectContent>
+              </Select>
             </FormField>
           </div>
 
