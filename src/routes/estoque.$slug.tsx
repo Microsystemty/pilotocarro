@@ -1,8 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, CheckCircle2, Fuel, Gauge, Images, Settings } from "lucide-react";
+import {
+  ArrowLeft,
+  Calculator,
+  CalendarDays,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Fuel,
+  Gauge,
+  Images,
+  Settings,
+  Share2,
+  ZoomIn,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
 import { formatCurrency, formatMileage } from "@/data/vehicles";
 import { useVehicles } from "@/hooks/use-vehicles";
@@ -23,6 +40,10 @@ function VehicleDetailPage() {
   const { vehicles, ready } = useVehicles();
   const vehicle = vehicles.find((item) => item.slug === slug);
   const [selectedImage, setSelectedImage] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [entry, setEntry] = useState(20);
+  const [months, setMonths] = useState(48);
+  const [shared, setShared] = useState(false);
 
   useEffect(() => {
     if (vehicle) setSelectedImage(vehicle.gallery[0] ?? vehicle.image);
@@ -58,6 +79,26 @@ function VehicleDetailPage() {
     { label: "Câmbio", value: vehicle.transmission, icon: Settings },
     { label: "Combustível", value: vehicle.fuel, icon: Fuel },
   ];
+  const currentImageIndex = Math.max(0, gallery.indexOf(selectedImage));
+  const financedAmount = vehicle.price * (1 - entry / 100);
+  const monthlyRate = 0.0149;
+  const installment =
+    (financedAmount * (monthlyRate * (1 + monthlyRate) ** months)) /
+    ((1 + monthlyRate) ** months - 1);
+  const shareVehicle = async () => {
+    const url = window.location.href;
+    if (navigator.share)
+      await navigator.share({
+        title: `${vehicle.brand} ${vehicle.model}`,
+        text: `Confira este veículo por ${formatCurrency(vehicle.price)}`,
+        url,
+      });
+    else {
+      await navigator.clipboard.writeText(url);
+      setShared(true);
+      setTimeout(() => setShared(false), 2000);
+    }
+  };
 
   return (
     <main className="bg-background">
@@ -69,13 +110,20 @@ function VehicleDetailPage() {
         </Button>
         <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
-            <div className="overflow-hidden rounded-2xl border border-border bg-muted shadow-card">
+            <button
+              type="button"
+              onClick={() => setLightboxOpen(true)}
+              className="group relative block w-full overflow-hidden rounded-2xl border border-border bg-muted text-left shadow-card"
+            >
               <img
                 src={selectedImage || gallery[0]}
                 alt={`${vehicle.brand} ${vehicle.model}`}
                 className="aspect-[4/3] w-full object-cover"
               />
-            </div>
+              <span className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-bold text-foreground opacity-100 backdrop-blur sm:opacity-0 sm:transition sm:group-hover:opacity-100">
+                <ZoomIn className="h-4 w-4" /> Ampliar
+              </span>
+            </button>
             <div className="mt-4 flex items-center justify-between gap-3">
               <p className="flex items-center gap-2 font-semibold text-foreground">
                 <Images className="h-5 w-5 text-primary" /> Todas as fotos
@@ -135,6 +183,10 @@ function VehicleDetailPage() {
                   Tenho interesse
                 </WhatsAppButton>
               </div>
+              <Button variant="outline" className="mt-3 w-full" onClick={() => void shareVehicle()}>
+                {shared ? <Copy /> : <Share2 />}
+                {shared ? "Link copiado" : "Compartilhar veículo"}
+              </Button>
             </div>
           </aside>
         </div>
@@ -187,7 +239,95 @@ function VehicleDetailPage() {
             </dl>
           </section>
         )}
+
+        <section className="mt-12 rounded-2xl border border-border bg-card p-6 shadow-premium sm:p-8">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <Calculator className="h-9 w-9 text-primary" />
+              <p className="mt-5 text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+                Simulação rápida
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-extrabold">
+                Veja uma parcela estimada
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Estimativa ilustrativa. A condição final depende da análise da instituição
+                financeira.
+              </p>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="entry">Entrada ({entry}%)</Label>
+                <Input
+                  id="entry"
+                  type="range"
+                  min="0"
+                  max="80"
+                  step="5"
+                  value={entry}
+                  onChange={(event) => setEntry(Number(event.target.value))}
+                />
+                <p className="text-sm font-bold text-foreground">
+                  {formatCurrency((vehicle.price * entry) / 100)}
+                </p>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="months">Quantidade de parcelas</Label>
+                <select
+                  id="months"
+                  value={months}
+                  onChange={(event) => setMonths(Number(event.target.value))}
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  {[12, 24, 36, 48, 60].map((value) => (
+                    <option key={value} value={value}>
+                      {value} parcelas
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="rounded-xl bg-primary p-5 text-primary-foreground sm:col-span-2">
+                <p className="text-sm opacity-80">Parcela estimada</p>
+                <p className="mt-1 font-display text-3xl font-extrabold">
+                  {months}x de {formatCurrency(installment)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </section>
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-6xl border-0 bg-black/95 p-3">
+          <DialogTitle className="sr-only">
+            Galeria de {vehicle.brand} {vehicle.model}
+          </DialogTitle>
+          <div className="relative">
+            <img
+              src={selectedImage || gallery[0]}
+              alt={`${vehicle.model} ampliado`}
+              className="max-h-[82vh] w-full rounded-lg object-contain"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full"
+              onClick={() =>
+                setSelectedImage(gallery[(currentImageIndex - 1 + gallery.length) % gallery.length])
+              }
+            >
+              <ChevronLeft />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
+              onClick={() => setSelectedImage(gallery[(currentImageIndex + 1) % gallery.length])}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

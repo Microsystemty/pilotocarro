@@ -8,6 +8,7 @@ import {
   HandCoins,
   Search,
   ShieldCheck,
+  Star,
 } from "lucide-react";
 import heroImage from "@/assets/auto-hero.jpg";
 import { AnimatedCarShowcase } from "@/components/site/animated-car-showcase";
@@ -40,7 +41,12 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { vehicles } = useVehicles();
-  const featuredVehicles = vehicles.filter((vehicle) => vehicle.featured).slice(0, 3);
+  const visibleVehicles = vehicles.filter((vehicle) => vehicle.status !== "hidden");
+  const featuredVehicles = visibleVehicles
+    .filter((vehicle) => vehicle.featured)
+    .sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99))
+    .slice(0, 3);
+  const vehicleOfWeek = featuredVehicles[0] ?? visibleVehicles[0];
   return (
     <main>
       <section className="relative min-h-[40rem] overflow-hidden bg-hero-gradient">
@@ -223,6 +229,81 @@ function Index() {
                 Faça uma simulação <ArrowRight />
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {vehicleOfWeek && (
+        <section className="bg-background py-16 sm:py-24">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-3xl border border-border bg-card shadow-premium lg:grid-cols-2">
+            <img
+              src={vehicleOfWeek.image}
+              alt={`${vehicleOfWeek.brand} ${vehicleOfWeek.model}`}
+              className="h-full min-h-80 w-full object-cover"
+            />
+            <div className="flex flex-col justify-center p-7 sm:p-12">
+              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
+                Veículo da semana
+              </p>
+              <h2 className="mt-3 font-display text-4xl font-extrabold">
+                {vehicleOfWeek.brand} {vehicleOfWeek.model}
+              </h2>
+              <p className="mt-3 text-muted-foreground">{vehicleOfWeek.description}</p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {vehicleOfWeek.highlights.map((item) => (
+                  <span key={item} className="rounded-full border border-border px-3 py-1 text-sm">
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <Button asChild variant="premium" size="lg" className="mt-8 w-fit rounded-full">
+                <Link to="/estoque/$slug" params={{ slug: vehicleOfWeek.slug }}>
+                  Conhecer este veículo <ArrowRight />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="border-y border-border bg-surface py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
+              Quem compra recomenda
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
+              Confiança em cada entrega
+            </h2>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                name: "Mariana Costa",
+                text: "Atendimento transparente e o carro estava exatamente como anunciado.",
+              },
+              {
+                name: "Rafael Almeida",
+                text: "Processo rápido, equipe atenciosa e ótima experiência na negociação.",
+              },
+              {
+                name: "Lucas Ferreira",
+                text: "Consegui comparar as opções e fechar o financiamento com tranquilidade.",
+              },
+            ].map((testimonial) => (
+              <article
+                key={testimonial.name}
+                className="rounded-2xl border border-border bg-card p-6 shadow-card"
+              >
+                <div className="flex gap-1 text-primary">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} className="h-4 w-4 fill-current" />
+                  ))}
+                </div>
+                <p className="mt-5 leading-7 text-muted-foreground">“{testimonial.text}”</p>
+                <p className="mt-5 font-bold text-foreground">{testimonial.name}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

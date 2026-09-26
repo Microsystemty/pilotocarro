@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { CarFront, Clock3, Menu, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 const navItems = [
   { label: "Início", to: "/" },
@@ -11,22 +12,26 @@ const navItems = [
   { label: "Contato", to: "/contato" },
 ] as const;
 
-function BrandMark() {
+function BrandMark({ name, tagline, logo }: { name: string; tagline: string; logo: string }) {
   return (
     <Link
       to="/"
       className="group flex min-w-0 items-center gap-3"
       aria-label="Ir para a página inicial"
     >
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-primary/60 bg-primary text-primary-foreground shadow-premium transition-transform group-hover:scale-95">
-        <CarFront className="h-5 w-5" aria-hidden="true" />
+      <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border border-primary/60 bg-primary text-primary-foreground shadow-premium transition-transform group-hover:scale-95">
+        {logo ? (
+          <img src={logo} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <CarFront className="h-5 w-5" aria-hidden="true" />
+        )}
       </span>
       <span className="min-w-0">
         <span className="block truncate font-display text-base font-extrabold uppercase tracking-[0.16em] text-foreground sm:text-lg">
-          Prime Motors
+          {name}
         </span>
         <span className="block truncate text-xs font-medium uppercase text-muted-foreground">
-          Seu próximo carro
+          {tagline}
         </span>
       </span>
     </Link>
@@ -85,24 +90,26 @@ function MobileNav() {
 }
 
 export function SiteHeader() {
+  const { settings } = useStoreSettings();
+  const whatsapp = settings.whatsapp.replace(/\D/g, "");
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
       <div className="hidden bg-primary text-primary-foreground md:block">
         <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 text-xs font-semibold lg:px-8">
           <span className="flex items-center gap-2">
-            <Clock3 className="h-3.5 w-3.5" /> Segunda a sexta, 9h às 19h · Sábado, 9h às 14h
+            <Clock3 className="h-3.5 w-3.5" /> {settings.hours}
           </span>
           <span className="flex items-center gap-2">
-            <Phone className="h-3.5 w-3.5" /> (11) 99999-9999
+            <Phone className="h-3.5 w-3.5" /> {settings.phone}
           </span>
         </div>
       </div>
       <div className="mx-auto grid h-20 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-6 lg:flex lg:justify-between lg:px-8">
-        <BrandMark />
+        <BrandMark name={settings.name} tagline={settings.tagline} logo={settings.logo} />
         <DesktopNav />
         <div className="hidden items-center gap-2 lg:flex">
           <Button asChild variant="whatsapp">
-            <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer">
+            <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer">
               <MessageCircle /> WhatsApp
             </a>
           </Button>

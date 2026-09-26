@@ -1,11 +1,23 @@
 import { Link } from "@tanstack/react-router";
-import { Fuel, Gauge, Settings, CalendarDays } from "lucide-react";
+import { CalendarDays, Fuel, Gauge, Heart, Scale, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, formatMileage, type Vehicle } from "@/data/vehicles";
+import { useVehiclePreferences } from "@/hooks/use-vehicle-preferences";
+
+const tagLabels = { offer: "Oferta", new: "Novidade", "low-mileage": "Baixa km", none: "" };
+const statusLabels = {
+  available: "Disponível",
+  reserved: "Reservado",
+  sold: "Vendido",
+  hidden: "Oculto",
+};
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+  const { favorites, compare, toggleFavorite, toggleCompare } = useVehiclePreferences();
+  const favorite = favorites.includes(vehicle.slug);
+  const comparing = compare.includes(vehicle.slug);
   return (
     <Card className="vehicle-card-premium group overflow-hidden rounded-2xl border-border bg-card shadow-card transition duration-500 hover:-translate-y-2 hover:border-primary/60 hover:shadow-premium">
       <Link
@@ -13,7 +25,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         params={{ slug: vehicle.slug }}
         aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}
       >
-        <div className="vehicle-card-premium__image aspect-[4/3] overflow-hidden bg-muted">
+        <div className="vehicle-card-premium__image relative aspect-[4/3] overflow-hidden bg-muted">
           <img
             src={vehicle.image}
             alt={`${vehicle.brand} ${vehicle.model}`}
@@ -22,6 +34,36 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             height={800}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
+          <div className="absolute left-3 top-3 z-10 flex gap-2">
+            {vehicle.tag && vehicle.tag !== "none" && <Badge>{tagLabels[vehicle.tag]}</Badge>}
+            {vehicle.status && vehicle.status !== "available" && (
+              <Badge variant="secondary">{statusLabels[vehicle.status]}</Badge>
+            )}
+          </div>
+          <div className="absolute right-3 top-3 z-10 flex gap-2">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                toggleFavorite(vehicle.slug);
+              }}
+              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur hover:text-primary"
+              aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <Heart className={`h-5 w-5 ${favorite ? "fill-primary text-primary" : ""}`} />
+            </button>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                toggleCompare(vehicle.slug);
+              }}
+              className={`grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-lg backdrop-blur ${comparing ? "text-primary" : "text-foreground hover:text-primary"}`}
+              aria-label={comparing ? "Remover da comparação" : "Adicionar à comparação"}
+            >
+              <Scale className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </Link>
       <CardContent className="p-5 sm:p-6">

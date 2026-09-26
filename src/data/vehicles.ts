@@ -16,6 +16,9 @@ export type Vehicle = {
   fuel: string;
   body: string;
   featured: boolean;
+  featuredOrder?: number;
+  status?: "available" | "reserved" | "sold" | "hidden";
+  tag?: "offer" | "new" | "low-mileage" | "none";
   image: string;
   gallery: string[];
   highlights: string[];
@@ -41,6 +44,9 @@ export const vehicles: Vehicle[] = [
     fuel: "Gasolina",
     body: "Coupé",
     featured: true,
+    featuredOrder: 1,
+    status: "available",
+    tag: "new",
     image: coupeImage,
     gallery: [coupeImage, heroImage, sedanImage],
     highlights: ["Pacote esportivo", "Interior premium", "Baixa quilometragem"],
@@ -59,6 +65,9 @@ export const vehicles: Vehicle[] = [
     fuel: "Flex",
     body: "Sedan",
     featured: true,
+    featuredOrder: 2,
+    status: "available",
+    tag: "low-mileage",
     image: sedanImage,
     gallery: [sedanImage, heroImage, suvImage],
     highlights: ["Único dono", "Garantia de fábrica", "Revisões em dia"],
@@ -77,6 +86,9 @@ export const vehicles: Vehicle[] = [
     fuel: "Gasolina",
     body: "SUV",
     featured: true,
+    featuredOrder: 3,
+    status: "available",
+    tag: "offer",
     image: suvImage,
     gallery: [suvImage, heroImage, pickupImage],
     highlights: ["Tração integral", "Teto panorâmico", "Sete airbags"],
@@ -95,6 +107,9 @@ export const vehicles: Vehicle[] = [
     fuel: "Diesel",
     body: "Pickup",
     featured: false,
+    featuredOrder: 4,
+    status: "available",
+    tag: "none",
     image: pickupImage,
     gallery: [pickupImage, suvImage, heroImage],
     highlights: ["4x4", "Capota marítima", "Central multimídia"],

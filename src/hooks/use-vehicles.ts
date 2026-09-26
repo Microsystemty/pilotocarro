@@ -56,7 +56,11 @@ export function useVehicles() {
     persistVehicles(readVehicles().filter((vehicle) => vehicle.slug !== slug));
   }, []);
 
-  return { vehicles, ready, saveVehicle, deleteVehicle };
+  const replaceVehicles = useCallback((nextVehicles: Vehicle[]) => {
+    persistVehicles(nextVehicles);
+  }, []);
+
+  return { vehicles, ready, saveVehicle, deleteVehicle, replaceVehicles };
 }
 
 export function createVehicleSlug(brand: string, model: string) {

@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "re
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Edit3,
+  ArrowLeft,
+  ArrowRight,
+  Copy,
+  Download,
   Eye,
   EyeOff,
   ImagePlus,
@@ -11,8 +15,10 @@ import {
   LogOut,
   Plus,
   Search,
+  Settings,
   ShieldCheck,
   Trash2,
+  Upload,
   UserPlus,
   Users,
   X,
@@ -42,6 +48,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -53,6 +66,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, type Vehicle } from "@/data/vehicles";
 import { createVehicleSlug, imageFileToDataUrl, useVehicles } from "@/hooks/use-vehicles";
+import { defaultStoreSettings, useStoreSettings } from "@/hooks/use-store-settings";
 import {
   createAdminUser,
   deleteAdminUser,
@@ -96,6 +110,9 @@ const emptyForm: VehicleForm = {
   highlights: "",
   description: "",
   details: [],
+  status: "available",
+  tag: "none",
+  featuredOrder: 99,
 };
 
 function vehicleToForm(vehicle: Vehicle): VehicleForm {
@@ -170,6 +187,9 @@ function VehicleFormDialog({
         .filter(Boolean),
       description: form.description.trim(),
       details: form.details.filter((detail) => detail.label.trim() && detail.value.trim()),
+      status: form.status ?? "available",
+      tag: form.tag ?? "none",
+      featuredOrder: Number(form.featuredOrder ?? 99),
     };
 
     try {
@@ -380,6 +400,34 @@ function VehicleFormDialog({
                       className="aspect-[4/3] w-full object-cover"
                     />
                     {index === 0 && <Badge className="absolute bottom-2 left-2">Principal</Badge>}
+                    <div className="absolute bottom-2 right-2 flex gap-1">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        className="grid h-8 w-8 place-items-center rounded-full bg-background/90 disabled:opacity-30"
+                        aria-label="Mover foto para a esquerda"
+                        onClick={() => {
+                          const next = [...form.gallery];
+                          [next[index - 1], next[index]] = [next[index], next[index - 1]];
+                          update("gallery", next);
+                        }}
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === form.gallery.length - 1}
+                        className="grid h-8 w-8 place-items-center rounded-full bg-background/90 disabled:opacity-30"
+                        aria-label="Mover foto para a direita"
+                        onClick={() => {
+                          const next = [...form.gallery];
+                          [next[index], next[index + 1]] = [next[index + 1], next[index]];
+                          update("gallery", next);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
                     <button
                       type="button"
                       onClick={() =>
@@ -406,6 +454,48 @@ function VehicleFormDialog({
             />
             Exibir este veículo nos destaques da página inicial
           </label>
+          <div className="grid gap-4 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
+            <FormField label="Situação do anúncio">
+              <Select
+                value={form.status ?? "available"}
+                onValueChange={(value) => update("status", value as Vehicle["status"])}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="available">Disponível</SelectItem>
+                  <SelectItem value="reserved">Reservado</SelectItem>
+                  <SelectItem value="sold">Vendido</SelectItem>
+                  <SelectItem value="hidden">Oculto</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormField>
+            <FormField label="Selo promocional">
+              <Select
+                value={form.tag ?? "none"}
+                onValueChange={(value) => update("tag", value as Vehicle["tag"])}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  <SelectItem value="offer">Oferta</SelectItem>
+                  <SelectItem value="new">Novidade</SelectItem>
+                  <SelectItem value="low-mileage">Baixa km</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormField>
+            <FormField label="Ordem do destaque">
+              <Input
+                type="number"
+                min="1"
+                value={form.featuredOrder ?? 99}
+                onChange={(event) => update("featuredOrder", Number(event.target.value))}
+              />
+            </FormField>
+          </div>
           {error && (
             <p
               role="alert"
@@ -548,7 +638,7 @@ function AdminLogin({ onAuthenticated }: { onAuthenticated: () => void }) {
 }
 
 function AdminDashboard({ onLogout }: { onLogout: () => void }) {
-  const { vehicles, saveVehicle, deleteVehicle } = useVehicles();
+  const { vehicles, saveVehicle, deleteVehicle, replaceVehicles } = useVehicles();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
@@ -577,6 +667,42 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const handleLogout = async () => {
     await logoutAdmin();
     onLogout();
+  };
+
+  const duplicateVehicle = (vehicle: Vehicle) => {
+    const copy = {
+      ...vehicle,
+      slug: createVehicleSlug(vehicle.brand, `${vehicle.model}-copia-${Date.now()}`),
+      model: `${vehicle.model} (cópia)`,
+      featured: false,
+      status: "hidden" as const,
+    };
+    saveVehicle(copy);
+    setFeedback("Cópia criada como anúncio oculto.");
+  };
+
+  const exportBackup = () => {
+    const blob = new Blob([JSON.stringify(vehicles, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `estoque-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importBackup = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (!Array.isArray(data) || data.some((item) => !item.slug || !item.brand || !item.gallery)) {
+        throw new Error("invalid");
+      }
+      replaceVehicles(data as Vehicle[]);
+      setFeedback("Backup importado com sucesso.");
+    } catch {
+      setFeedback("O arquivo selecionado não é um backup válido.");
+    }
   };
 
   return (
@@ -613,6 +739,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             <TabsTrigger value="users" className="gap-2 px-4 py-2.5">
               <Users className="h-4 w-4" /> Usuários
             </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2 px-4 py-2.5">
+              <Settings className="h-4 w-4" /> Configurações
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="vehicles" className="mt-6">
@@ -625,7 +754,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               </div>
             )}
 
-            <section className="mt-6 grid gap-4 md:grid-cols-3">
+            <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
               <Metric label="Veículos cadastrados" value={vehicles.length} />
               <Metric
                 label="Em destaque"
@@ -635,10 +764,25 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 label="Fotos armazenadas"
                 value={vehicles.reduce((total, vehicle) => total + vehicle.gallery.length, 0)}
               />
+              <Metric
+                label="Valor do estoque"
+                value={formatCurrency(
+                  vehicles.reduce((total, vehicle) => total + vehicle.price, 0),
+                )}
+              />
+              <Metric
+                label="Preço médio"
+                value={formatCurrency(
+                  vehicles.length
+                    ? vehicles.reduce((total, vehicle) => total + vehicle.price, 0) /
+                        vehicles.length
+                    : 0,
+                )}
+              />
             </section>
 
             <section className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-premium">
-              <div className="grid gap-4 border-b border-border p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-5">
+              <div className="grid gap-4 border-b border-border p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center sm:p-5">
                 <div className="relative min-w-0">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -648,7 +792,21 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     onChange={(event) => setSearch(event.target.value)}
                   />
                 </div>
-                <Badge variant="outline">{filteredVehicles.length} resultado(s)</Badge>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={exportBackup}>
+                    <Download /> Exportar
+                  </Button>
+                  <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent">
+                    <Upload className="h-4 w-4" /> Importar
+                    <input
+                      type="file"
+                      accept="application/json"
+                      className="sr-only"
+                      onChange={(event) => void importBackup(event.target.files?.[0])}
+                    />
+                  </label>
+                  <Badge variant="outline">{filteredVehicles.length} resultado(s)</Badge>
+                </div>
               </div>
               <div className="overflow-x-auto">
                 <Table>
@@ -684,12 +842,42 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         <TableCell>{vehicle.year}</TableCell>
                         <TableCell>{formatCurrency(vehicle.price)}</TableCell>
                         <TableCell>
-                          <Badge variant={vehicle.featured ? "default" : "secondary"}>
-                            {vehicle.featured ? "Destaque" : "Estoque"}
+                          <Badge
+                            variant={
+                              vehicle.status === "available" || !vehicle.status
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {vehicle.status === "reserved"
+                              ? "Reservado"
+                              : vehicle.status === "sold"
+                                ? "Vendido"
+                                : vehicle.status === "hidden"
+                                  ? "Oculto"
+                                  : "Disponível"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            <Button asChild variant="outline" size="icon">
+                              <a
+                                href={`/estoque/${vehicle.slug}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label={`Visualizar ${vehicle.brand} ${vehicle.model}`}
+                              >
+                                <Eye />
+                              </a>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              aria-label={`Duplicar ${vehicle.brand} ${vehicle.model}`}
+                              onClick={() => duplicateVehicle(vehicle)}
+                            >
+                              <Copy />
+                            </Button>
                             <Button
                               variant="outline"
                               size="icon"
@@ -750,6 +938,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
           <TabsContent value="users" className="mt-6">
             <UserManagement />
+          </TabsContent>
+          <TabsContent value="settings" className="mt-6">
+            <StoreSettingsPanel />
           </TabsContent>
         </Tabs>
       </div>
@@ -971,7 +1162,125 @@ function UserManagement() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function StoreSettingsPanel() {
+  const { settings, saveSettings } = useStoreSettings();
+  const [form, setForm] = useState(settings);
+  const [feedback, setFeedback] = useState("");
+
+  const set = (key: keyof typeof form, value: string) =>
+    setForm((current) => ({ ...current, [key]: value }));
+  const handleLogo = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      set("logo", await imageFileToDataUrl(file));
+    } catch {
+      setFeedback("Não foi possível processar o logotipo.");
+    }
+  };
+
+  return (
+    <form
+      className="grid gap-6 rounded-2xl border border-border bg-card p-5 shadow-premium sm:p-7"
+      onSubmit={(event) => {
+        event.preventDefault();
+        saveSettings(form);
+        setFeedback("Configurações salvas e aplicadas no site.");
+      }}
+    >
+      <div>
+        <h2 className="font-display text-2xl font-extrabold">Identidade da loja</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Personalize os dados exibidos no cabeçalho e no rodapé.
+        </p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField label="Nome da loja" required>
+          <Input value={form.name} onChange={(event) => set("name", event.target.value)} required />
+        </FormField>
+        <FormField label="Frase da marca" required>
+          <Input
+            value={form.tagline}
+            onChange={(event) => set("tagline", event.target.value)}
+            required
+          />
+        </FormField>
+        <FormField label="Telefone" required>
+          <Input
+            value={form.phone}
+            onChange={(event) => set("phone", event.target.value)}
+            required
+          />
+        </FormField>
+        <FormField label="WhatsApp com DDD" required>
+          <Input
+            value={form.whatsapp}
+            onChange={(event) => set("whatsapp", event.target.value)}
+            required
+          />
+        </FormField>
+        <FormField label="Endereço" required>
+          <Input
+            value={form.address}
+            onChange={(event) => set("address", event.target.value)}
+            required
+          />
+        </FormField>
+        <FormField label="Horário" required>
+          <Input
+            value={form.hours}
+            onChange={(event) => set("hours", event.target.value)}
+            required
+          />
+        </FormField>
+      </div>
+      <div className="grid gap-3">
+        <Label>Logotipo</Label>
+        <div className="flex flex-wrap items-center gap-4">
+          {form.logo ? (
+            <img
+              src={form.logo}
+              alt="Prévia do logotipo"
+              className="h-20 w-20 rounded-full border object-cover"
+            />
+          ) : (
+            <div className="grid h-20 w-20 place-items-center rounded-full bg-primary text-primary-foreground">
+              <Settings />
+            </div>
+          )}
+          <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-input px-4 text-sm font-medium">
+            <Upload className="h-4 w-4" /> Selecionar imagem
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(event) => void handleLogo(event.target.files?.[0])}
+            />
+          </label>
+          {form.logo && (
+            <Button type="button" variant="ghost" onClick={() => set("logo", "")}>
+              Remover
+            </Button>
+          )}
+        </div>
+      </div>
+      {feedback && (
+        <p className="rounded-lg bg-whatsapp/10 p-3 text-sm font-medium text-whatsapp">
+          {feedback}
+        </p>
+      )}
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" onClick={() => setForm(defaultStoreSettings)}>
+          Restaurar padrão
+        </Button>
+        <Button type="submit" variant="premium">
+          Salvar configurações
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <p className="text-sm text-muted-foreground">{label}</p>
