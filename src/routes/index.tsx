@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import heroImage from "@/assets/auto-hero.jpg";
+import { AnimatedCarShowcase } from "@/components/site/animated-car-showcase";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
@@ -42,23 +43,24 @@ function Index() {
   const featuredVehicles = vehicles.filter((vehicle) => vehicle.featured).slice(0, 3);
   return (
     <main>
-      <section className="relative min-h-[34rem] overflow-hidden bg-hero-gradient">
+      <section className="relative min-h-[40rem] overflow-hidden bg-hero-gradient">
         <img
           src={heroImage}
           alt="Sedan premium em uma concessionária moderna"
           width={1600}
           height={1000}
-          className="absolute inset-0 h-full w-full object-cover opacity-45"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-hero-overlay" />
-        <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl py-8">
+        <div className="hero-light-sweep" />
+        <div className="relative mx-auto grid min-h-[40rem] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+          <div className="hero-copy max-w-3xl py-8">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-hero-foreground shadow-soft">
               <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" /> Compra segura e sem
               complicação
             </p>
             <h1 className="mt-6 max-w-3xl font-display text-5xl font-extrabold leading-[1.02] text-hero-foreground sm:text-6xl lg:text-7xl">
-              Encontre o carro certo para a sua próxima história.
+              Seu próximo carro merece <span className="hero-accent-text">ser inesquecível.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-hero-muted">
               Seminovos selecionados, atendimento próximo e todas as informações para você escolher
@@ -90,6 +92,29 @@ function Index() {
                 <p className="text-sm">retorno comercial</p>
               </div>
             </div>
+          </div>
+          <div>
+            <AnimatedCarShowcase />
+          </div>
+        </div>
+        <div className="hero-ticker" aria-hidden="true">
+          <div className="hero-ticker__track">
+            <span>COMPRA SEGURA</span>
+            <i />
+            <span>VEÍCULOS SELECIONADOS</span>
+            <i />
+            <span>FINANCIAMENTO</span>
+            <i />
+            <span>AVALIAÇÃO JUSTA</span>
+            <i />
+            <span>COMPRA SEGURA</span>
+            <i />
+            <span>VEÍCULOS SELECIONADOS</span>
+            <i />
+            <span>FINANCIAMENTO</span>
+            <i />
+            <span>AVALIAÇÃO JUSTA</span>
+            <i />
           </div>
         </div>
       </section>

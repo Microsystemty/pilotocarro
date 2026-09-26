@@ -7,13 +7,13 @@ import { formatCurrency, formatMileage, type Vehicle } from "@/data/vehicles";
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
-    <Card className="group overflow-hidden rounded-2xl border-border bg-card shadow-card transition duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-premium">
+    <Card className="vehicle-card-premium group overflow-hidden rounded-2xl border-border bg-card shadow-card transition duration-500 hover:-translate-y-2 hover:border-primary/60 hover:shadow-premium">
       <Link
         to="/estoque/$slug"
         params={{ slug: vehicle.slug }}
         aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}
       >
-        <div className="aspect-[4/3] overflow-hidden bg-muted">
+        <div className="vehicle-card-premium__image aspect-[4/3] overflow-hidden bg-muted">
           <img
             src={vehicle.image}
             alt={`${vehicle.brand} ${vehicle.model}`}
