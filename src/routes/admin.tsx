@@ -1,6 +1,20 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Edit3, ImagePlus, Loader2, Plus, Search, Trash2, X } from "lucide-react";
+import {
+  Edit3,
+  Eye,
+  EyeOff,
+  ImagePlus,
+  Loader2,
+  LockKeyhole,
+  LogIn,
+  LogOut,
+  Plus,
+  Search,
+  ShieldCheck,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,8 +50,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { formatCurrency, type Vehicle } from "@/data/vehicles";
 import { createVehicleSlug, imageFileToDataUrl, useVehicles } from "@/hooks/use-vehicles";
+import { getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
 
 export const Route = createFileRoute("/admin")({
+  loader: () => getAdminSession(),
   head: () => ({
     meta: [
       { title: "Gestão de veículos — Prime Motors" },
@@ -423,6 +439,105 @@ function FormField({
 }
 
 function AdminPage() {
+  const initialSession = Route.useLoaderData();
+  const [authenticated, setAuthenticated] = useState(initialSession.authenticated);
+
+  if (!authenticated) {
+    return <AdminLogin onAuthenticated={() => setAuthenticated(true)} />;
+  }
+
+  return <AdminDashboard onLogout={() => setAuthenticated(false)} />;
+}
+
+function AdminLogin({ onAuthenticated }: { onAuthenticated: () => void }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const result = await loginAdmin({ data: { username, password } });
+      if (result.authenticated) onAuthenticated();
+      else setError(result.error);
+    } catch {
+      setError("Não foi possível entrar agora. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="grid min-h-[75vh] place-items-center bg-surface px-4 py-12">
+      <section className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-premium">
+        <div className="border-b border-border bg-foreground px-6 py-8 text-background">
+          <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground">
+            <ShieldCheck className="h-6 w-6" />
+          </div>
+          <p className="mt-6 text-xs font-extrabold uppercase tracking-[0.18em] text-primary">
+            Área protegida
+          </p>
+          <h1 className="mt-2 font-display text-3xl font-extrabold">Painel administrativo</h1>
+          <p className="mt-2 text-sm text-background/70">
+            Informe suas credenciais para gerenciar o estoque.
+          </p>
+        </div>
+        <form onSubmit={handleLogin} className="grid gap-5 p-6">
+          <FormField label="Usuário" required>
+            <Input
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoComplete="username"
+              autoFocus
+              required
+            />
+          </FormField>
+          <FormField label="Senha" required>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                className="pr-11"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute right-0 top-0 grid h-full w-11 place-items-center text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </FormField>
+          {error && (
+            <p
+              role="alert"
+              className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
+          <Button type="submit" variant="premium" size="lg" disabled={loading}>
+            {loading ? <Loader2 className="animate-spin" /> : <LogIn />}
+            {loading ? "Entrando..." : "Entrar no painel"}
+          </Button>
+          <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <LockKeyhole className="h-3.5 w-3.5" /> Sessão protegida e expira após 8 horas
+          </p>
+        </form>
+      </section>
+    </main>
+  );
+}
+
+function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const { vehicles, saveVehicle, deleteVehicle } = useVehicles();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -449,6 +564,11 @@ function AdminPage() {
     );
   };
 
+  const handleLogout = async () => {
+    await logoutAdmin();
+    onLogout();
+  };
+
   return (
     <main className="min-h-screen bg-surface py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -465,9 +585,14 @@ function AdminPage() {
               site.
             </p>
           </div>
-          <Button variant="premium" onClick={openNewVehicle}>
-            <Plus /> Novo veículo
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => void handleLogout()}>
+              <LogOut /> Sair
+            </Button>
+            <Button variant="premium" onClick={openNewVehicle}>
+              <Plus /> Novo veículo
+            </Button>
+          </div>
         </div>
 
         {feedback && (
