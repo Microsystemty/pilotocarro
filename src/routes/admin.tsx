@@ -9,6 +9,7 @@ import {
   Eye,
   EyeOff,
   ImagePlus,
+  LayoutDashboard,
   Loader2,
   LockKeyhole,
   LogIn,
@@ -23,6 +24,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,6 +39,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import {
   Dialog,
   DialogContent,
@@ -731,8 +739,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         </div>
 
-        <Tabs defaultValue="vehicles" className="mt-8">
+        <Tabs defaultValue="dashboard" className="mt-8">
           <TabsList className="h-auto w-full justify-start gap-1 bg-card p-1.5 shadow-card sm:w-auto">
+            <TabsTrigger value="dashboard" className="gap-2 px-4 py-2.5">
+              <LayoutDashboard className="h-4 w-4" /> Dashboard
+            </TabsTrigger>
             <TabsTrigger value="vehicles" className="gap-2 px-4 py-2.5">
               <Edit3 className="h-4 w-4" /> Veículos
             </TabsTrigger>
@@ -743,6 +754,10 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <Settings className="h-4 w-4" /> Configurações
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="dashboard" className="mt-6">
+            <AdminDashboardOverview vehicles={vehicles} />
+          </TabsContent>
 
           <TabsContent value="vehicles" className="mt-6">
             {feedback && (
@@ -962,6 +977,186 @@ type AdminUserSummary = {
   createdAt: string;
   removable: boolean;
 };
+
+const dashboardChartConfig = {
+  total: { label: "Veículos", color: "var(--chart-1)" },
+  value: { label: "Valor", color: "var(--chart-2)" },
+} satisfies ChartConfig;
+
+const chartColors = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
+
+function AdminDashboardOverview({ vehicles }: { vehicles: Vehicle[] }) {
+  const byBrand = useMemo(() => {
+    const groups = new Map<string, { name: string; total: number; value: number }>();
+    vehicles.forEach((vehicle) => {
+      const current = groups.get(vehicle.brand) ?? { name: vehicle.brand, total: 0, value: 0 };
+      current.total += 1;
+      current.value += vehicle.price;
+      groups.set(vehicle.brand, current);
+    });
+    return [...groups.values()].sort((a, b) => b.total - a.total);
+  }, [vehicles]);
+
+  const statusData = useMemo(() => {
+    const labels: Record<NonNullable<Vehicle["status"]>, string> = {
+      available: "Disponíveis",
+      reserved: "Reservados",
+      sold: "Vendidos",
+      hidden: "Ocultos",
+    };
+    return Object.entries(labels).map(([status, name]) => ({
+      name,
+      total: vehicles.filter((vehicle) => (vehicle.status ?? "available") === status).length,
+    }));
+  }, [vehicles]);
+
+  const byBody = useMemo(() => {
+    const groups = new Map<string, number>();
+    vehicles.forEach((vehicle) => groups.set(vehicle.body, (groups.get(vehicle.body) ?? 0) + 1));
+    return [...groups].map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
+  }, [vehicles]);
+
+  const available = vehicles.filter(
+    (vehicle) => (vehicle.status ?? "available") === "available",
+  ).length;
+  const sold = vehicles.filter((vehicle) => vehicle.status === "sold").length;
+  const conversion = vehicles.length ? Math.round((sold / vehicles.length) * 100) : 0;
+  const inventoryValue = vehicles
+    .filter((vehicle) => vehicle.status !== "sold")
+    .reduce((total, vehicle) => total + vehicle.price, 0);
+
+  return (
+    <div className="grid gap-6">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Metric label="Veículos disponíveis" value={available} />
+        <Metric label="Veículos vendidos" value={sold} />
+        <Metric label="Taxa de vendas" value={`${conversion}%`} />
+        <Metric label="Valor disponível" value={formatCurrency(inventoryValue)} />
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-2">
+        <DashboardCard
+          title="Veículos por fabricante"
+          description="Quantidade atual de anúncios por marca."
+        >
+          <ChartContainer config={dashboardChartConfig} className="h-80 w-full aspect-auto">
+            <BarChart data={byBrand} margin={{ left: 0, right: 10, top: 12 }}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="name" tickLine={false} axisLine={false} />
+              <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="total" fill="var(--color-total)" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </DashboardCard>
+
+        <DashboardCard
+          title="Situação do estoque"
+          description="Distribuição entre disponíveis, reservados, vendidos e ocultos."
+        >
+          <div className="grid items-center gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <ChartContainer config={dashboardChartConfig} className="h-72 w-full aspect-auto">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <Pie
+                  data={statusData}
+                  dataKey="total"
+                  nameKey="name"
+                  innerRadius={58}
+                  outerRadius={96}
+                  paddingAngle={3}
+                >
+                  {statusData.map((item, index) => (
+                    <Cell key={item.name} fill={chartColors[index % chartColors.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+            <div className="grid gap-3">
+              {statusData.map((item, index) => (
+                <div key={item.name} className="flex items-center gap-2 text-sm">
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: chartColors[index % chartColors.length] }}
+                  />
+                  <span className="min-w-24 text-muted-foreground">{item.name}</span>
+                  <strong>{item.total}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DashboardCard>
+
+        <DashboardCard
+          title="Categorias do estoque"
+          description="Quais tipos de carro formam o catálogo."
+        >
+          <ChartContainer config={dashboardChartConfig} className="h-72 w-full aspect-auto">
+            <BarChart data={byBody} layout="vertical" margin={{ left: 8, right: 18 }}>
+              <CartesianGrid horizontal={false} />
+              <XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} width={74} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="total" fill="var(--color-total)" radius={[0, 8, 8, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </DashboardCard>
+
+        <DashboardCard
+          title="Valor por fabricante"
+          description="Soma do preço anunciado por marca."
+        >
+          <ChartContainer config={dashboardChartConfig} className="h-72 w-full aspect-auto">
+            <BarChart data={byBrand} margin={{ left: 8, right: 8, top: 12 }}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="name" tickLine={false} axisLine={false} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                width={54}
+                tickFormatter={(value) => `${Math.round(value / 1000)}k`}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value) => (
+                      <span className="font-semibold">{formatCurrency(Number(value))}</span>
+                    )}
+                  />
+                }
+              />
+              <Bar dataKey="value" fill="var(--color-value)" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </DashboardCard>
+      </section>
+    </div>
+  );
+}
+
+function DashboardCard({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <article className="min-w-0 rounded-2xl border border-border bg-card p-5 shadow-card sm:p-6">
+      <h2 className="font-display text-xl font-extrabold text-foreground">{title}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      <div className="mt-5">{children}</div>
+    </article>
+  );
+}
 
 function UserManagement() {
   const [users, setUsers] = useState<AdminUserSummary[]>([]);
