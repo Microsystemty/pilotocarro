@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { vehicles as initialVehicles, type Vehicle } from "@/data/vehicles";
+import {
+  demoCatalogVehicleSlugs,
+  vehicles as initialVehicles,
+  type Vehicle,
+} from "@/data/vehicles";
 
 const STORAGE_KEY = "prime-motors-vehicles-v1";
 const UPDATE_EVENT = "prime-motors-vehicles-updated";
+const DEMO_CATALOG_SEED_KEY = "prime-motors-demo-catalog-v1";
 
 function readVehicles() {
   if (typeof window === "undefined") return initialVehicles;
@@ -20,12 +25,29 @@ function persistVehicles(nextVehicles: Vehicle[]) {
   window.dispatchEvent(new CustomEvent(UPDATE_EVENT, { detail: nextVehicles }));
 }
 
+function seedDemoCatalog(currentVehicles: Vehicle[]) {
+  if (typeof window === "undefined" || window.localStorage.getItem(DEMO_CATALOG_SEED_KEY)) {
+    return currentVehicles;
+  }
+
+  const additionalVehicles = initialVehicles.filter(
+    (vehicle) =>
+      demoCatalogVehicleSlugs.includes(vehicle.slug) &&
+      !currentVehicles.some((current) => current.slug === vehicle.slug),
+  );
+  window.localStorage.setItem(DEMO_CATALOG_SEED_KEY, "true");
+  return additionalVehicles.length ? [...additionalVehicles, ...currentVehicles] : currentVehicles;
+}
+
 export function useVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(initialVehicles);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setVehicles(readVehicles());
+    const storedVehicles = readVehicles();
+    const seededVehicles = seedDemoCatalog(storedVehicles);
+    if (seededVehicles !== storedVehicles) persistVehicles(seededVehicles);
+    setVehicles(seededVehicles);
     setReady(true);
 
     const handleUpdate = (event: Event) => {
