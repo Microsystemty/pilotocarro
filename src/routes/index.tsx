@@ -128,51 +128,68 @@ function Index() {
         </div>
       </section>
 
-      <section className="relative z-10 -mt-10 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-2xl border border-border bg-card p-5 shadow-card sm:p-7">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="w-full max-w-2xl">
-              <label htmlFor="home-search" className="text-lg font-extrabold text-foreground">
-                Qual veículo você está buscando?
-              </label>
-              <div className="mt-3 flex overflow-hidden rounded-xl border border-border bg-background focus-within:border-primary">
-                <Search
-                  className="ml-4 mt-3.5 h-5 w-5 shrink-0 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <input
-                  id="home-search"
-                  className="h-12 min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-                  placeholder="Digite marca ou modelo"
-                />
-                <Button asChild variant="premium" className="h-12 rounded-none px-6">
+      <section className="border-b border-border bg-surface px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="mx-auto max-w-7xl rounded-3xl border border-border bg-card p-5 shadow-premium sm:p-8">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div className="w-full max-w-3xl">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Search className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-primary">
+                    Busca rápida
+                  </p>
+                  <label
+                    htmlFor="home-search"
+                    className="mt-0.5 block text-lg font-extrabold text-foreground sm:text-xl"
+                  >
+                    Qual veículo você está buscando?
+                  </label>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="flex h-12 items-center rounded-xl border border-border bg-background px-4 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
+                  <Search className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <input
+                    id="home-search"
+                    className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                    placeholder="Digite uma marca ou modelo"
+                  />
+                </div>
+                <Button asChild variant="premium" className="h-12 rounded-xl px-7">
                   <Link to="/estoque">Pesquisar</Link>
                 </Button>
               </div>
             </div>
-            <Button asChild variant="outline" size="lg" className="rounded-full">
+            <Button asChild variant="outline" size="lg" className="w-full rounded-full lg:w-auto">
               <Link to="/estoque">
                 Ver todo o estoque <ArrowRight />
               </Link>
             </Button>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {["BMW", "Chevrolet", "Fiat", "Ford", "Hyundai", "Toyota", "Volkswagen"].map(
-              (brand) => (
-                <Link
-                  key={brand}
-                  to="/estoque"
-                  className="rounded-xl border border-border bg-background px-3 py-4 text-center text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
-                >
-                  {brand}
-                </Link>
-              ),
-            )}
+          <div className="mt-7 border-t border-border pt-6">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+              Busque pelas marcas mais procuradas
+            </p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+              {["BMW", "Chevrolet", "Fiat", "Ford", "Hyundai", "Toyota", "Volkswagen"].map(
+                (brand) => (
+                  <Link
+                    key={brand}
+                    to="/estoque"
+                    className="rounded-xl border border-border bg-background px-3 py-3.5 text-center text-sm font-bold text-foreground transition duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary/5 hover:text-primary"
+                  >
+                    {brand}
+                  </Link>
+                ),
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-background pb-16 pt-20 sm:pb-24 sm:pt-28">
+      <section className="bg-background py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="flex items-center gap-3">
