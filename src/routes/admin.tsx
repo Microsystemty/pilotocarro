@@ -143,6 +143,7 @@ function VehicleFormDialog({
   onOpenChange: (open: boolean) => void;
   onSave: (vehicle: Vehicle) => void;
 }) {
+  const { settings } = useStoreSettings();
   const [form, setForm] = useState<VehicleForm>(vehicle ? vehicleToForm(vehicle) : emptyForm);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -227,6 +228,29 @@ function VehicleFormDialog({
                 onChange={(event) => update("brand", event.target.value)}
                 required
               />
+              {settings.brands.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1" aria-label="Marcas pré-definidas">
+                  {settings.brands.map((brand) => (
+                    <label
+                      key={brand}
+                      className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                        form.brand === brand
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/60"
+                      }`}
+                    >
+                      <Checkbox
+                        checked={form.brand === brand}
+                        onCheckedChange={(checked) =>
+                          update("brand", checked === true ? brand : "")
+                        }
+                        className="h-3.5 w-3.5"
+                      />
+                      {brand}
+                    </label>
+                  ))}
+                </div>
+              )}
             </FormField>
             <FormField label="Modelo" required>
               <Input
@@ -1360,9 +1384,10 @@ function UserManagement() {
 function StoreSettingsPanel() {
   const { settings, saveSettings } = useStoreSettings();
   const [form, setForm] = useState(settings);
+  const [brandsText, setBrandsText] = useState(settings.brands.join(", "));
   const [feedback, setFeedback] = useState("");
 
-  const set = (key: keyof typeof form, value: string) =>
+  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const handleLogo = async (file: File | undefined) => {
     if (!file) return;
@@ -1378,7 +1403,14 @@ function StoreSettingsPanel() {
       className="grid gap-6 rounded-2xl border border-border bg-card p-5 shadow-premium sm:p-7"
       onSubmit={(event) => {
         event.preventDefault();
-        saveSettings(form);
+        saveSettings({
+          ...form,
+          brands: brandsText
+            .split(",")
+            .map((brand) => brand.trim())
+            .filter(Boolean)
+            .filter((brand, index, brands) => brands.indexOf(brand) === index),
+        });
         setFeedback("Configurações salvas e aplicadas no site.");
       }}
     >
@@ -1428,6 +1460,18 @@ function StoreSettingsPanel() {
           />
         </FormField>
       </div>
+      <FormField label="Marcas pré-definidas">
+        <Textarea
+          value={brandsText}
+          onChange={(event) => setBrandsText(event.target.value)}
+          placeholder="Toyota, Honda, Chevrolet, Volkswagen"
+          className="min-h-24"
+        />
+        <p className="text-xs text-muted-foreground">
+          Separe as marcas por vírgulas. Elas aparecerão como opções rápidas no cadastro de
+          veículos.
+        </p>
+      </FormField>
       <div className="grid gap-3">
         <Label>Logotipo</Label>
         <div className="flex flex-wrap items-center gap-4">
@@ -1464,7 +1508,14 @@ function StoreSettingsPanel() {
         </p>
       )}
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={() => setForm(defaultStoreSettings)}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            setForm(defaultStoreSettings);
+            setBrandsText(defaultStoreSettings.brands.join(", "));
+          }}
+        >
           Restaurar padrão
         </Button>
         <Button type="submit" variant="premium">
