@@ -53,14 +53,17 @@ function Index() {
         />
         <div className="absolute inset-0 bg-hero-overlay" />
         <div className="hero-light-sweep" />
-        <div className="relative mx-auto grid min-h-[40rem] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <div className="relative mx-auto grid min-h-[40rem] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
           <div className="hero-copy max-w-3xl py-8">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-hero-foreground shadow-soft">
               <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" /> Compra segura e sem
               complicação
             </p>
-            <h1 className="mt-6 max-w-3xl font-display text-5xl font-extrabold leading-[1.02] text-hero-foreground sm:text-6xl lg:text-7xl">
-              Seu próximo carro merece <span className="hero-accent-text">ser inesquecível.</span>
+            <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.6rem,9vw,3.9rem)] font-extrabold leading-[1.02] text-hero-foreground">
+              Seu próximo carro
+              <span className="block">
+                merece ser <span className="hero-accent-text">inesquecível.</span>
+              </span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-hero-muted">
               Seminovos selecionados, atendimento próximo e todas as informações para você escolher
@@ -78,7 +81,7 @@ function Index() {
                 message="Olá, quero conhecer os veículos disponíveis na Prime Motors."
               />
             </div>
-            <div className="mt-12 grid max-w-2xl grid-cols-3 gap-3 text-hero-muted">
+            <div className="hero-metrics mt-12 grid max-w-2xl grid-cols-3 gap-2 text-hero-muted sm:gap-3">
               <div className="border-l border-hero-line pl-4">
                 <p className="font-display text-2xl font-semibold text-hero-foreground">+40</p>
                 <p className="text-sm">veículos no padrão</p>
@@ -165,16 +168,17 @@ function Index() {
 
       <section className="bg-background pb-16 pt-20 sm:pb-24 sm:pt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-primary" aria-hidden="true" />
               <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
                 Últimas novidades
               </p>
-              <h2 className="mt-3 font-display text-3xl font-extrabold text-foreground sm:text-4xl">
-                Destaques do nosso estoque
-              </h2>
             </div>
-            <p className="max-w-2xl text-base leading-7 text-muted-foreground lg:justify-self-end">
+            <h2 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
+              Destaques do nosso estoque
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
               Veículos escolhidos com cuidado, informações transparentes e atendimento pronto para
               ajudar.
             </p>

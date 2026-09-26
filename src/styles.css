@@ -191,6 +191,14 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
+    min-width: 320px;
+    overflow-x: clip;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
   }
 
   ::selection {
@@ -468,6 +476,45 @@
   background: linear-gradient(transparent, oklch(0.08 0.008 25 / 62%));
   content: "";
   pointer-events: none;
+}
+
+@media (max-width: 479px) {
+  .hero-metrics {
+    font-size: 0.7rem;
+  }
+
+  .hero-metrics > div {
+    padding-left: 0.65rem;
+  }
+
+  .hero-metrics p:first-child {
+    font-size: 1.25rem;
+  }
+
+  .car-showcase {
+    min-height: 17rem;
+    margin-inline: -0.75rem;
+  }
+
+  .car-showcase__badge {
+    right: 2%;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.62rem;
+  }
+
+  .car-showcase__stat {
+    gap: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.62rem;
+  }
+
+  .car-showcase__stat--left {
+    left: 2%;
+  }
+
+  .car-showcase__stat--right {
+    right: 2%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
