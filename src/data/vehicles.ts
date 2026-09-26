@@ -22,6 +22,11 @@ export type Vehicle = {
   tag?: "offer" | "new" | "low-mileage" | "none";
   image: string;
   gallery: string[];
+  imageCredit?: {
+    author: string;
+    license: string;
+    sourceUrl: string;
+  };
   highlights: string[];
   description: string;
   details?: Array<{
@@ -29,6 +34,20 @@ export type Vehicle = {
     value: string;
   }>;
 };
+
+const demoVehiclePhotos = {
+  gol: "https://commons.wikimedia.org/wiki/Special:FilePath/VW_Gol_2009_front.jpg?width=1280",
+  corsa: "https://commons.wikimedia.org/wiki/Special:FilePath/Brazilian_Chevy_Corsa.jpg?width=1280",
+  tucson: "https://commons.wikimedia.org/wiki/Special:FilePath/Hyundai_Tucson_.jpg?width=1280",
+  corolla:
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Toyota_Corolla_(50316620921).jpg?width=1280",
+  hilux:
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Toyota_Hilux_(50722639491).jpg?width=1280",
+  onix: "https://commons.wikimedia.org/wiki/Special:FilePath/Chevrolet_Onix.JPG?width=1280",
+  tracker:
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Chevrolet_Tracker_1.8_LT_Highway_2017_(52780903018).jpg?width=1280",
+  yaris: "https://commons.wikimedia.org/wiki/Special:FilePath/Yaris.jpg?width=1280",
+} as const;
 
 export const whatsappNumber = "5511999999999";
 
@@ -131,8 +150,13 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "none",
-    image: sedanImage,
-    gallery: [sedanImage, heroImage, coupeImage],
+    image: demoVehiclePhotos.gol,
+    gallery: [demoVehiclePhotos.gol],
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "Domínio público",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:VW_Gol_2009_front.jpg",
+    },
     highlights: ["Econômico", "Revisado", "Documentação em dia"],
     description:
       "Hatch compacto conhecido pela mecânica confiável e baixo custo de manutenção. Ótima opção para o dia a dia, primeiro carro ou trabalho.",
@@ -151,8 +175,13 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "offer",
-    image: coupeImage,
-    gallery: [coupeImage, sedanImage, heroImage],
+    image: demoVehiclePhotos.corsa,
+    gallery: [demoVehiclePhotos.corsa],
+    imageCredit: {
+      author: "Renzo Maia",
+      license: "CC BY 3.0",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Brazilian_Chevy_Corsa.jpg",
+    },
     highlights: ["Motor 1.4", "Ar-condicionado", "Ótimo custo-benefício"],
     description:
       "Compacto prático e confortável, com manutenção simples e amplo histórico de procura no mercado de seminovos.",
@@ -172,8 +201,13 @@ export const vehicles: Vehicle[] = [
     featuredOrder: 5,
     status: "available",
     tag: "low-mileage",
-    image: suvImage,
-    gallery: [suvImage, heroImage, sedanImage],
+    image: demoVehiclePhotos.tucson,
+    gallery: [demoVehiclePhotos.tucson],
+    imageCredit: {
+      author: "IFCAR",
+      license: "Domínio público",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Hyundai_Tucson_.jpg",
+    },
     highlights: ["Teto panorâmico", "Câmera de ré", "Interior espaçoso"],
     description:
       "SUV com design marcante, excelente posição de dirigir e pacote completo para quem busca conforto e segurança em família.",
@@ -193,8 +227,13 @@ export const vehicles: Vehicle[] = [
     featuredOrder: 4,
     status: "available",
     tag: "new",
-    image: sedanImage,
-    gallery: [sedanImage, heroImage, coupeImage],
+    image: demoVehiclePhotos.corolla,
+    gallery: [demoVehiclePhotos.corolla],
+    imageCredit: {
+      author: "crash71100",
+      license: "CC0 1.0",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Toyota_Corolla_(50316620921).jpg",
+    },
     highlights: ["Único dono", "Revisões em dia", "Multimídia"],
     description:
       "Sedã reconhecido pela confiabilidade, conforto e ótima liquidez. Veículo selecionado para uma compra tranquila.",
@@ -213,8 +252,13 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "none",
-    image: pickupImage,
-    gallery: [pickupImage, suvImage, heroImage],
+    image: demoVehiclePhotos.hilux,
+    gallery: [demoVehiclePhotos.hilux],
+    imageCredit: {
+      author: "crash71100",
+      license: "CC0 1.0",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Toyota_Hilux_(50722639491).jpg",
+    },
     highlights: ["Tração 4x4", "Cabine dupla", "Capota marítima"],
     description:
       "Picape robusta com capacidade para trabalho e conforto para viagens, preparada para diferentes tipos de terreno.",
@@ -233,8 +277,13 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "low-mileage",
-    image: coupeImage,
-    gallery: [coupeImage, sedanImage, heroImage],
+    image: demoVehiclePhotos.onix,
+    gallery: [demoVehiclePhotos.onix],
+    imageCredit: {
+      author: "Matti Blume",
+      license: "CC BY-SA 3.0",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Chevrolet_Onix.JPG",
+    },
     highlights: ["Turbo", "Baixa quilometragem", "Controle de estabilidade"],
     description:
       "Hatch moderno, econômico e equipado, ideal para quem quer conectividade e praticidade sem abrir mão do desempenho.",
@@ -253,8 +302,14 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "none",
-    image: suvImage,
-    gallery: [suvImage, heroImage, sedanImage],
+    image: demoVehiclePhotos.tracker,
+    gallery: [demoVehiclePhotos.tracker],
+    imageCredit: {
+      author: "Wikimedia Commons",
+      license: "Ver licença na fonte",
+      sourceUrl:
+        "https://commons.wikimedia.org/wiki/File:Chevrolet_Tracker_1.8_LT_Highway_2017_(52780903018).jpg",
+    },
     highlights: ["Wi-Fi nativo", "Chave presencial", "Seis airbags"],
     description:
       "SUV compacto com tecnologia, boa altura do solo e excelente conjunto para a rotina urbana e viagens curtas.",
@@ -273,8 +328,13 @@ export const vehicles: Vehicle[] = [
     featured: false,
     status: "available",
     tag: "none",
-    image: sedanImage,
-    gallery: [sedanImage, heroImage, suvImage],
+    image: demoVehiclePhotos.yaris,
+    gallery: [demoVehiclePhotos.yaris],
+    imageCredit: {
+      author: "Roman Tworkowski",
+      license: "CC BY 2.5 / GFDL",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Yaris.jpg",
+    },
     highlights: ["Câmbio CVT", "Econômico", "Revisado"],
     description:
       "Hatch compacto com condução suave, boa eficiência e padrão de confiabilidade para uso diário.",

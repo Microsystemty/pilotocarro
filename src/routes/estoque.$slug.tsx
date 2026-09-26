@@ -154,6 +154,19 @@ function VehicleDetailPage() {
                 </button>
               ))}
             </div>
+            {vehicle.imageCredit && (
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                Foto de demonstração: {vehicle.imageCredit.author} · {vehicle.imageCredit.license}.{" "}
+                <a
+                  href={vehicle.imageCredit.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  Ver fonte
+                </a>
+              </p>
+            )}
           </div>
 
           <aside className="lg:sticky lg:top-32 lg:self-start">

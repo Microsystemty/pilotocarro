@@ -8,6 +8,7 @@ import {
 const STORAGE_KEY = "prime-motors-vehicles-v1";
 const UPDATE_EVENT = "prime-motors-vehicles-updated";
 const DEMO_CATALOG_SEED_KEY = "prime-motors-demo-catalog-v1";
+const DEMO_CATALOG_IMAGE_REFRESH_KEY = "prime-motors-demo-images-v1";
 
 function readVehicles() {
   if (typeof window === "undefined") return initialVehicles;
@@ -39,6 +40,35 @@ function seedDemoCatalog(currentVehicles: Vehicle[]) {
   return additionalVehicles.length ? [...additionalVehicles, ...currentVehicles] : currentVehicles;
 }
 
+function refreshDemoCatalogImages(currentVehicles: Vehicle[]) {
+  if (
+    typeof window === "undefined" ||
+    window.localStorage.getItem(DEMO_CATALOG_IMAGE_REFRESH_KEY)
+  ) {
+    return currentVehicles;
+  }
+
+  const demoVehiclesBySlug = new Map(
+    initialVehicles
+      .filter((vehicle) => demoCatalogVehicleSlugs.includes(vehicle.slug))
+      .map((vehicle) => [vehicle.slug, vehicle]),
+  );
+  const refreshedVehicles = currentVehicles.map((vehicle) => {
+    const demoVehicle = demoVehiclesBySlug.get(vehicle.slug);
+    if (!demoVehicle) return vehicle;
+
+    return {
+      ...vehicle,
+      image: demoVehicle.image,
+      gallery: demoVehicle.gallery,
+      imageCredit: demoVehicle.imageCredit,
+    };
+  });
+
+  window.localStorage.setItem(DEMO_CATALOG_IMAGE_REFRESH_KEY, "true");
+  return refreshedVehicles;
+}
+
 export function useVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(initialVehicles);
   const [ready, setReady] = useState(false);
@@ -46,8 +76,9 @@ export function useVehicles() {
   useEffect(() => {
     const storedVehicles = readVehicles();
     const seededVehicles = seedDemoCatalog(storedVehicles);
-    if (seededVehicles !== storedVehicles) persistVehicles(seededVehicles);
-    setVehicles(seededVehicles);
+    const refreshedVehicles = refreshDemoCatalogImages(seededVehicles);
+    if (refreshedVehicles !== storedVehicles) persistVehicles(refreshedVehicles);
+    setVehicles(refreshedVehicles);
     setReady(true);
 
     const handleUpdate = (event: Event) => {
