@@ -1,13 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { CarFront, Menu, ShieldCheck } from "lucide-react";
+import { CarFront, Clock3, Menu, MessageCircle, Phone, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
   { label: "Início", to: "/" },
@@ -19,16 +13,20 @@ const navItems = [
 
 function BrandMark() {
   return (
-    <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="Ir para a página inicial">
-      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-premium transition-transform group-hover:scale-95">
+    <Link
+      to="/"
+      className="group flex min-w-0 items-center gap-3"
+      aria-label="Ir para a página inicial"
+    >
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-primary/60 bg-primary text-primary-foreground shadow-premium transition-transform group-hover:scale-95">
         <CarFront className="h-5 w-5" aria-hidden="true" />
       </span>
       <span className="min-w-0">
-        <span className="block truncate font-display text-base font-semibold uppercase text-foreground sm:text-lg">
+        <span className="block truncate font-display text-base font-extrabold uppercase tracking-[0.16em] text-foreground sm:text-lg">
           Prime Motors
         </span>
         <span className="block truncate text-xs font-medium uppercase text-muted-foreground">
-          Veículos premium
+          Seu próximo carro
         </span>
       </span>
     </Link>
@@ -43,8 +41,8 @@ function DesktopNav() {
           key={item.to}
           to={item.to}
           activeOptions={{ exact: item.to === "/" }}
-          className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          activeProps={{ className: "bg-muted text-foreground" }}
+          className="border-b-2 border-transparent px-3 py-2 text-sm font-bold uppercase text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+          activeProps={{ className: "border-primary text-foreground" }}
         >
           {item.label}
         </Link>
@@ -61,7 +59,10 @@ function MobileNav() {
           <Menu aria-hidden="true" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[min(24rem,calc(100vw-2rem))] border-border bg-background">
+      <SheetContent
+        side="right"
+        className="w-[min(24rem,calc(100vw-2rem))] border-border bg-background"
+      >
         <SheetHeader>
           <SheetTitle className="text-left font-display">Prime Motors</SheetTitle>
         </SheetHeader>
@@ -92,7 +93,17 @@ function MobileNav() {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+      <div className="hidden bg-primary text-primary-foreground md:block">
+        <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 text-xs font-semibold lg:px-8">
+          <span className="flex items-center gap-2">
+            <Clock3 className="h-3.5 w-3.5" /> Segunda a sexta, 9h às 19h · Sábado, 9h às 14h
+          </span>
+          <span className="flex items-center gap-2">
+            <Phone className="h-3.5 w-3.5" /> (11) 99999-9999
+          </span>
+        </div>
+      </div>
       <div className="mx-auto grid h-20 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-6 lg:flex lg:justify-between lg:px-8">
         <BrandMark />
         <DesktopNav />
@@ -103,8 +114,10 @@ export function SiteHeader() {
               Admin
             </Link>
           </Button>
-          <Button asChild variant="premium">
-            <Link to="/estoque">Ver estoque</Link>
+          <Button asChild variant="whatsapp">
+            <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer">
+              <MessageCircle /> WhatsApp
+            </a>
           </Button>
         </div>
         <MobileNav />
