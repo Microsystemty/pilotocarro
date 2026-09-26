@@ -52,6 +52,7 @@ type VehicleForm = Omit<Vehicle, "slug" | "image" | "gallery" | "highlights"> & 
   slug?: string;
   gallery: string[];
   highlights: string;
+  details: Array<{ label: string; value: string }>;
 };
 
 const emptyForm: VehicleForm = {
@@ -68,6 +69,7 @@ const emptyForm: VehicleForm = {
   gallery: [],
   highlights: "",
   description: "",
+  details: [],
 };
 
 function vehicleToForm(vehicle: Vehicle): VehicleForm {
@@ -75,6 +77,7 @@ function vehicleToForm(vehicle: Vehicle): VehicleForm {
     ...vehicle,
     gallery: vehicle.gallery.length ? vehicle.gallery : [vehicle.image],
     highlights: vehicle.highlights.join(", "),
+    details: vehicle.details ?? [],
   };
 }
 
@@ -140,6 +143,7 @@ function VehicleFormDialog({
         .map((item) => item.trim())
         .filter(Boolean),
       description: form.description.trim(),
+      details: form.details.filter((detail) => detail.label.trim() && detail.value.trim()),
     };
 
     try {
@@ -253,6 +257,72 @@ function VehicleFormDialog({
               required
             />
           </FormField>
+
+          <div className="grid gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <Label>Detalhes adicionais</Label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Adicione informações como cor, motor, portas, tração ou garantia.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => update("details", [...form.details, { label: "", value: "" }])}
+              >
+                <Plus /> Adicionar detalhe
+              </Button>
+            </div>
+            {form.details.map((detail, index) => (
+              <div
+                key={`detail-${index}`}
+                className="grid gap-2 rounded-xl border border-border bg-surface p-3 sm:grid-cols-[1fr_1fr_auto]"
+              >
+                <Input
+                  value={detail.label}
+                  placeholder="Nome: Cor"
+                  aria-label={`Nome do detalhe ${index + 1}`}
+                  onChange={(event) =>
+                    update(
+                      "details",
+                      form.details.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, label: event.target.value } : item,
+                      ),
+                    )
+                  }
+                />
+                <Input
+                  value={detail.value}
+                  placeholder="Valor: Preto"
+                  aria-label={`Valor do detalhe ${index + 1}`}
+                  onChange={(event) =>
+                    update(
+                      "details",
+                      form.details.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, value: event.target.value } : item,
+                      ),
+                    )
+                  }
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Remover detalhe ${index + 1}`}
+                  onClick={() =>
+                    update(
+                      "details",
+                      form.details.filter((_, itemIndex) => itemIndex !== index),
+                    )
+                  }
+                >
+                  <X />
+                </Button>
+              </div>
+            ))}
+          </div>
 
           <div className="grid gap-3">
             <Label>Fotos do veículo</Label>

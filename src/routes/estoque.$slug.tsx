@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, Fuel, Gauge, Settings } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Fuel, Gauge, Images, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
@@ -76,7 +76,15 @@ function VehicleDetailPage() {
                 className="aspect-[4/3] w-full object-cover"
               />
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <p className="flex items-center gap-2 font-semibold text-foreground">
+                <Images className="h-5 w-5 text-primary" /> Todas as fotos
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {gallery.length} {gallery.length === 1 ? "imagem" : "imagens"}
+              </p>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
               {gallery.map((image, index) => (
                 <button
                   type="button"
@@ -142,15 +150,43 @@ function VehicleDetailPage() {
           </div>
           <div>
             <p className="text-base leading-8 text-muted-foreground">{vehicle.description}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {vehicle.highlights.map((highlight) => (
-                <Badge key={highlight} variant="outline">
+                <div
+                  key={highlight}
+                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-sm font-medium text-foreground"
+                >
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
                   {highlight}
-                </Badge>
+                </div>
               ))}
             </div>
           </div>
         </section>
+
+        {!!vehicle.details?.length && (
+          <section className="mt-12 border-t border-border pt-10">
+            <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+              Informações adicionais
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-foreground">
+              Mais detalhes deste veículo
+            </h2>
+            <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {vehicle.details.map((detail, index) => (
+                <div
+                  key={`${detail.label}-${index}`}
+                  className="rounded-xl border border-border bg-card p-5 shadow-card"
+                >
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {detail.label}
+                  </dt>
+                  <dd className="mt-2 font-semibold text-foreground">{detail.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
       </section>
     </main>
   );

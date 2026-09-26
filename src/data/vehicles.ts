@@ -20,6 +20,10 @@ export type Vehicle = {
   gallery: string[];
   highlights: string[];
   description: string;
+  details?: Array<{
+    label: string;
+    value: string;
+  }>;
 };
 
 export const whatsappNumber = "5511999999999";
