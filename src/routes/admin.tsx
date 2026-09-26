@@ -112,6 +112,7 @@ const emptyForm: VehicleForm = {
   mileage: 0,
   transmission: "Automático",
   fuel: "Flex",
+  additionalFuel: "none",
   body: "SUV",
   featured: false,
   gallery: [],
@@ -143,8 +144,14 @@ function VehicleFormDialog({
   onOpenChange: (open: boolean) => void;
   onSave: (vehicle: Vehicle) => void;
 }) {
-  const { settings } = useStoreSettings();
+  const { settings, saveSettings } = useStoreSettings();
   const [form, setForm] = useState<VehicleForm>(vehicle ? vehicleToForm(vehicle) : emptyForm);
+  const [addingBrand, setAddingBrand] = useState(
+    Boolean(vehicle?.brand && !settings.brands.includes(vehicle.brand)),
+  );
+  const [newBrand, setNewBrand] = useState(
+    vehicle?.brand && !settings.brands.includes(vehicle.brand) ? vehicle.brand : "",
+  );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
@@ -171,6 +178,10 @@ function VehicleFormDialog({
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    if (!form.brand.trim()) {
+      setError("Selecione uma marca ou adicione uma nova.");
+      return;
+    }
     if (!form.gallery.length) {
       setError("Adicione pelo menos uma foto do veículo.");
       return;
@@ -186,6 +197,7 @@ function VehicleFormDialog({
       mileage: Number(form.mileage),
       transmission: form.transmission.trim(),
       fuel: form.fuel.trim(),
+      additionalFuel: form.additionalFuel === "none" ? undefined : form.additionalFuel?.trim(),
       body: form.body.trim(),
       featured: form.featured,
       image: form.gallery[0],
@@ -223,32 +235,62 @@ function VehicleFormDialog({
         <form onSubmit={handleSubmit} className="grid gap-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <FormField label="Marca" required>
-              <Input
-                value={form.brand}
-                onChange={(event) => update("brand", event.target.value)}
-                required
-              />
-              {settings.brands.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-1" aria-label="Marcas pré-definidas">
+              <Select
+                value={addingBrand ? "__new" : form.brand}
+                onValueChange={(value) => {
+                  if (value === "__new") {
+                    setAddingBrand(true);
+                    setNewBrand("");
+                    update("brand", "");
+                  } else {
+                    setAddingBrand(false);
+                    update("brand", value);
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a marca" />
+                </SelectTrigger>
+                <SelectContent>
                   {settings.brands.map((brand) => (
-                    <label
-                      key={brand}
-                      className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                        form.brand === brand
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/60"
-                      }`}
-                    >
-                      <Checkbox
-                        checked={form.brand === brand}
-                        onCheckedChange={(checked) =>
-                          update("brand", checked === true ? brand : "")
-                        }
-                        className="h-3.5 w-3.5"
-                      />
+                    <SelectItem key={brand} value={brand}>
                       {brand}
-                    </label>
+                    </SelectItem>
                   ))}
+                  <SelectItem value="__new">+ Adicionar nova marca</SelectItem>
+                </SelectContent>
+              </Select>
+              {addingBrand && (
+                <div className="flex gap-2">
+                  <Input
+                    value={newBrand}
+                    onChange={(event) => setNewBrand(event.target.value)}
+                    placeholder="Nome da nova marca"
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const brand = newBrand.trim();
+                      if (!brand) return;
+                      const brands = [...settings.brands, brand]
+                        .filter(
+                          (item, index, items) =>
+                            items.findIndex(
+                              (candidate) =>
+                                candidate.toLocaleLowerCase("pt-BR") ===
+                                item.toLocaleLowerCase("pt-BR"),
+                            ) === index,
+                        )
+                        .sort((a, b) => a.localeCompare(b, "pt-BR"));
+                      saveSettings({ ...settings, brands });
+                      update("brand", brand);
+                      setAddingBrand(false);
+                    }}
+                  >
+                    Salvar
+                  </Button>
                 </div>
               )}
             </FormField>
@@ -303,11 +345,32 @@ function VehicleFormDialog({
               />
             </FormField>
             <FormField label="Combustível" required>
-              <Input
-                value={form.fuel}
-                onChange={(event) => update("fuel", event.target.value)}
-                required
-              />
+              <Select value={form.fuel} onValueChange={(value) => update("fuel", value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Flex">Flex</SelectItem>
+                  <SelectItem value="Gasolina">Gasolina</SelectItem>
+                  <SelectItem value="Álcool">Álcool</SelectItem>
+                  <SelectItem value="Elétrico">Elétrico</SelectItem>
+                  <SelectItem value="Diesel">Diesel</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormField>
+            <FormField label="Combustível adicional">
+              <Select
+                value={form.additionalFuel ?? "none"}
+                onValueChange={(value) => update("additionalFuel", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  <SelectItem value="GNV">GNV</SelectItem>
+                </SelectContent>
+              </Select>
             </FormField>
             <FormField label="Categoria" required>
               <Input

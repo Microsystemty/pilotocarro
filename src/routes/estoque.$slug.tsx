@@ -77,7 +77,11 @@ function VehicleDetailPage() {
     { label: "Ano", value: vehicle.year, icon: CalendarDays },
     { label: "Quilometragem", value: formatMileage(vehicle.mileage), icon: Gauge },
     { label: "Câmbio", value: vehicle.transmission, icon: Settings },
-    { label: "Combustível", value: vehicle.fuel, icon: Fuel },
+    {
+      label: "Combustível",
+      value: vehicle.additionalFuel ? `${vehicle.fuel} + ${vehicle.additionalFuel}` : vehicle.fuel,
+      icon: Fuel,
+    },
   ];
   const currentImageIndex = Math.max(0, gallery.indexOf(selectedImage));
   const financedAmount = vehicle.price * (1 - entry / 100);

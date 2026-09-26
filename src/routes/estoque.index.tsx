@@ -51,7 +51,9 @@ function StockPage() {
         (filters.year === "all" || vehicle.year === Number(filters.year)) &&
         priceOk &&
         (filters.transmission === "all" || vehicle.transmission === filters.transmission) &&
-        (filters.fuel === "all" || vehicle.fuel === filters.fuel) &&
+        (filters.fuel === "all" ||
+          vehicle.fuel === filters.fuel ||
+          vehicle.additionalFuel === filters.fuel) &&
         (filters.body === "all" || vehicle.body === filters.body) &&
         (!filters.favoritesOnly || favorites.includes(vehicle.slug))
       );
@@ -87,7 +89,13 @@ function StockPage() {
             brands={[...new Set(visibleVehicles.map((v) => v.brand))]}
             years={[...new Set(visibleVehicles.map((v) => v.year))].sort((a, b) => b - a)}
             transmissions={[...new Set(visibleVehicles.map((v) => v.transmission))]}
-            fuels={[...new Set(visibleVehicles.map((v) => v.fuel))]}
+            fuels={[
+              ...new Set(
+                visibleVehicles.flatMap((vehicle) =>
+                  vehicle.additionalFuel ? [vehicle.fuel, vehicle.additionalFuel] : [vehicle.fuel],
+                ),
+              ),
+            ]}
             bodies={[...new Set(visibleVehicles.map((v) => v.body))]}
           />
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">

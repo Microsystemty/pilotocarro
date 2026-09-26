@@ -14,6 +14,7 @@ export type Vehicle = {
   mileage: number;
   transmission: string;
   fuel: string;
+  additionalFuel?: string;
   body: string;
   featured: boolean;
   featuredOrder?: number;

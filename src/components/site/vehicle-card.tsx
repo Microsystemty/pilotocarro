@@ -96,6 +96,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           </span>
           <span className="flex min-w-0 items-center gap-2">
             <Fuel className="h-4 w-4 shrink-0 text-primary" /> {vehicle.fuel}
+            {vehicle.additionalFuel ? ` + ${vehicle.additionalFuel}` : ""}
           </span>
         </div>
         <Button asChild variant="premium" className="mt-5 w-full rounded-full font-bold">
