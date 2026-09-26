@@ -2,15 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/site/page-hero";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { VehicleFilters } from "@/components/site/vehicle-filters";
-import { vehicles } from "@/data/vehicles";
+import { useVehicles } from "@/hooks/use-vehicles";
 
 export const Route = createFileRoute("/estoque")({
   head: () => ({
     meta: [
       { title: "Estoque — Prime Motors" },
-      { name: "description", content: "Consulte o estoque inicial da Prime Motors com cards de veículos e filtros por marca, modelo, ano e preço." },
+      {
+        name: "description",
+        content:
+          "Consulte o estoque inicial da Prime Motors com cards de veículos e filtros por marca, modelo, ano e preço.",
+      },
       { property: "og:title", content: "Estoque — Prime Motors" },
-      { property: "og:description", content: "Veja veículos disponíveis em uma vitrine premium, organizada e responsiva." },
+      {
+        property: "og:description",
+        content: "Veja veículos disponíveis em uma vitrine premium, organizada e responsiva.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -19,6 +26,7 @@ export const Route = createFileRoute("/estoque")({
 });
 
 function StockPage() {
+  const { vehicles } = useVehicles();
   return (
     <main>
       <PageHero

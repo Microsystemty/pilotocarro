@@ -13,7 +13,7 @@ import heroImage from "@/assets/auto-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
-import { featuredVehicles } from "@/data/vehicles";
+import { useVehicles } from "@/hooks/use-vehicles";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,6 +38,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { vehicles } = useVehicles();
+  const featuredVehicles = vehicles.filter((vehicle) => vehicle.featured).slice(0, 3);
   return (
     <main>
       <section className="relative min-h-[34rem] overflow-hidden bg-hero-gradient">

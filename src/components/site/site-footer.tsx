@@ -33,9 +33,6 @@ export function SiteFooter() {
             <Link to="/contato" className="hover:text-foreground">
               Contato
             </Link>
-            <Link to="/admin" className="hover:text-foreground">
-              Admin
-            </Link>
           </nav>
         </div>
         <div>

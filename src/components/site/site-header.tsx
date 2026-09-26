@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CarFront, Clock3, Menu, MessageCircle, Phone, ShieldCheck } from "lucide-react";
+import { CarFront, Clock3, Menu, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -78,13 +78,6 @@ function MobileNav() {
               {item.label}
             </Link>
           ))}
-          <Link
-            to="/admin"
-            className="mt-4 inline-flex items-center gap-2 rounded-md border border-border px-3 py-3 text-sm font-semibold text-foreground"
-          >
-            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            Painel administrativo
-          </Link>
         </div>
       </SheetContent>
     </Sheet>
@@ -108,12 +101,6 @@ export function SiteHeader() {
         <BrandMark />
         <DesktopNav />
         <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild variant="outline">
-            <Link to="/admin">
-              <ShieldCheck aria-hidden="true" />
-              Admin
-            </Link>
-          </Button>
           <Button asChild variant="whatsapp">
             <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer">
               <MessageCircle /> WhatsApp
