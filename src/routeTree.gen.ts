@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ALojaRouteImport } from './routes/a-loja'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as EstoqueRouteImport } from './routes/estoque'
@@ -21,6 +22,11 @@ import { Route as EstoqueSlugRouteImport } from './routes/estoque.$slug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ALojaRoute = ALojaRouteImport.update({
+  id: '/a-loja',
+  path: '/a-loja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -61,6 +67,7 @@ const EstoqueSlugRoute = EstoqueSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/a-loja': typeof ALojaRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/estoque': typeof EstoqueRouteWithChildren
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/a-loja': typeof ALojaRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/financiamento': typeof FinanciamentoRoute
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/a-loja': typeof ALojaRoute
   '/admin': typeof AdminRoute
   '/contato': typeof ContatoRoute
   '/estoque': typeof EstoqueRouteWithChildren
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/a-loja'
     | '/admin'
     | '/contato'
     | '/estoque'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/a-loja'
     | '/admin'
     | '/contato'
     | '/financiamento'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/a-loja'
     | '/admin'
     | '/contato'
     | '/estoque'
@@ -123,6 +135,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ALojaRoute: typeof ALojaRoute
   AdminRoute: typeof AdminRoute
   ContatoRoute: typeof ContatoRoute
   EstoqueRoute: typeof EstoqueRouteWithChildren
@@ -137,6 +150,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/a-loja': {
+      id: '/a-loja'
+      path: '/a-loja'
+      fullPath: '/a-loja'
+      preLoaderRoute: typeof ALojaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -206,6 +226,7 @@ const EstoqueRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ALojaRoute: ALojaRoute,
   AdminRoute: AdminRoute,
   ContatoRoute: ContatoRoute,
   EstoqueRoute: EstoqueRouteWithChildren,
