@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { CarFront, Clock3, Menu, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,8 +58,10 @@ function DesktopNav() {
 }
 
 function MobileNav() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="lg:hidden" aria-label="Abrir menu">
           <Menu aria-hidden="true" />
@@ -77,6 +80,7 @@ function MobileNav() {
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
+              onClick={() => setOpen(false)}
               className="rounded-md px-3 py-3 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
               activeProps={{ className: "bg-muted text-foreground" }}
             >

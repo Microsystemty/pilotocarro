@@ -539,11 +539,14 @@
 
 @media (max-width: 479px) {
   .hero-metrics {
-    font-size: 0.7rem;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    max-width: 15rem;
+    font-size: 0.78rem;
   }
 
   .hero-metrics > div {
-    padding-left: 0.65rem;
+    padding-left: 0.9rem;
   }
 
   .hero-metrics p:first-child {
@@ -551,19 +554,28 @@
   }
 
   .car-showcase {
-    min-height: 17rem;
+    min-height: 20rem;
     margin-inline: -0.75rem;
   }
 
+  .car-showcase__vehicle {
+    left: -4%;
+    top: 12%;
+    width: 108%;
+  }
+
   .car-showcase__badge {
+    top: 3%;
     right: 2%;
     padding: 0.5rem 0.7rem;
     font-size: 0.62rem;
   }
 
   .car-showcase__stat {
+    bottom: 3%;
     gap: 0.4rem;
     padding: 0.55rem 0.65rem;
+    width: calc(50% - 0.45rem);
     font-size: 0.62rem;
   }
 

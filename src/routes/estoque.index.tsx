@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Scale, X } from "lucide-react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
 import { VehicleCard } from "@/components/site/vehicle-card";
@@ -9,7 +10,13 @@ import { formatCurrency } from "@/data/vehicles";
 import { useVehiclePreferences } from "@/hooks/use-vehicle-preferences";
 import { useVehicles } from "@/hooks/use-vehicles";
 
+const stockSearchSchema = z.object({
+  brand: z.string().trim().min(1).optional(),
+  query: z.string().trim().optional(),
+});
+
 export const Route = createFileRoute("/estoque/")({
+  validateSearch: stockSearchSchema,
   head: () => ({
     meta: [
       { title: "Estoque — Prime Motors" },
@@ -29,9 +36,14 @@ export const Route = createFileRoute("/estoque/")({
 });
 
 function StockPage() {
+  const search = Route.useSearch();
   const { vehicles } = useVehicles();
   const { favorites, compare, clearCompare, toggleCompare } = useVehiclePreferences();
-  const [filters, setFilters] = useState(emptyVehicleFilters);
+  const [filters, setFilters] = useState(() => ({
+    ...emptyVehicleFilters,
+    brand: search.brand ?? "all",
+    query: search.query ?? "",
+  }));
   const visibleVehicles = useMemo(
     () => vehicles.filter((vehicle) => vehicle.status !== "hidden"),
     [vehicles],
@@ -46,7 +58,8 @@ function StockPage() {
         (filters.price === "350" && vehicle.price > 250000 && vehicle.price <= 350000) ||
         (filters.price === "351+" && vehicle.price > 350000);
       return (
-        (filters.brand === "all" || vehicle.brand === filters.brand) &&
+        (filters.brand === "all" ||
+          vehicle.brand.localeCompare(filters.brand, "pt-BR", { sensitivity: "accent" }) === 0) &&
         (!filters.query || text.includes(filters.query.toLowerCase())) &&
         (filters.year === "all" || vehicle.year === Number(filters.year)) &&
         priceOk &&

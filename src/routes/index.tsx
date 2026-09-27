@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [homeSearch, setHomeSearch] = useState("");
   const { vehicles } = useVehicles();
   const visibleVehicles = vehicles.filter((vehicle) => vehicle.status !== "hidden");
   const featuredVehicles = visibleVehicles
@@ -149,12 +151,16 @@ function Index() {
                   <Search className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
                   <input
                     id="home-search"
+                    value={homeSearch}
+                    onChange={(event) => setHomeSearch(event.target.value)}
                     className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                     placeholder="Digite uma marca ou modelo"
                   />
                 </div>
                 <Button asChild variant="premium" className="h-12 rounded-xl px-7">
-                  <Link to="/estoque">Pesquisar</Link>
+                  <Link to="/estoque" search={{ query: homeSearch.trim() || undefined }}>
+                    Pesquisar
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -174,6 +180,7 @@ function Index() {
                   <Link
                     key={brand}
                     to="/estoque"
+                    search={{ brand }}
                     className="rounded-xl border border-border bg-background px-3 py-3.5 text-center text-sm font-bold text-foreground transition duration-200 hover:-translate-y-0.5 hover:border-primary hover:bg-primary/5 hover:text-primary"
                   >
                     {brand}
