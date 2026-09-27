@@ -7,6 +7,7 @@ import { useStoreSettings } from "@/hooks/use-store-settings";
 
 const navItems = [
   { label: "Início", to: "/" },
+  { label: "A loja", to: "/a-loja" },
   { label: "Estoque", to: "/estoque" },
   { label: "Venda seu carro", to: "/venda-seu-carro" },
   { label: "Financiamento", to: "/financiamento" },

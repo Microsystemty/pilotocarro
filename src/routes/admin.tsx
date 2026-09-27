@@ -1551,6 +1551,83 @@ function StoreSettingsPanel() {
           veículos.
         </p>
       </FormField>
+      <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
+        <div>
+          <h3 className="font-display text-lg font-extrabold text-foreground">Página “A loja”</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Apresente o ambiente da loja e fotos reais de clientes para reforçar a confiança.
+          </p>
+        </div>
+        <div className="mt-5 grid gap-5">
+          <FormField label="Link do vídeo de apresentação">
+            <Input
+              type="url"
+              value={form.aboutVideoUrl}
+              onChange={(event) => set("aboutVideoUrl", event.target.value)}
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Use um link público do YouTube ou Vimeo. O vídeo será exibido na página “A loja”.
+            </p>
+          </FormField>
+          <div className="grid gap-3">
+            <Label>Galeria de clientes recentes</Label>
+            <div className="flex flex-wrap gap-3">
+              {form.customerGallery.map((image, index) => (
+                <div key={`${image.slice(0, 36)}-${index}`} className="group relative h-24 w-32">
+                  <img
+                    src={image}
+                    alt={`Cliente ${index + 1}`}
+                    className="h-full w-full rounded-lg border border-border object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      set(
+                        "customerGallery",
+                        form.customerGallery.filter((_, imageIndex) => imageIndex !== index),
+                      )
+                    }
+                    className="absolute right-1 top-1 grid h-7 w-7 place-items-center rounded-full bg-foreground text-background opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100"
+                    aria-label={`Remover foto ${index + 1}`}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+              {form.customerGallery.length < 8 && (
+                <label className="grid h-24 w-32 cursor-pointer place-items-center rounded-lg border border-dashed border-primary/50 bg-primary/5 text-center text-xs font-bold text-primary transition hover:bg-primary/10">
+                  <span className="grid justify-items-center gap-1">
+                    <ImagePlus className="h-5 w-5" /> Adicionar fotos
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="sr-only"
+                    onChange={(event) => {
+                      const files = [...(event.target.files ?? [])].slice(
+                        0,
+                        8 - form.customerGallery.length,
+                      );
+                      void Promise.all(files.map(imageFileToDataUrl))
+                        .then((images) =>
+                          set("customerGallery", [...form.customerGallery, ...images]),
+                        )
+                        .catch(() => setFeedback("Não foi possível processar uma das fotos."));
+                      event.target.value = "";
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Até 8 fotos. Escolha imagens autorizadas pelos clientes; elas ficam visíveis na página
+              pública.
+            </p>
+          </div>
+        </div>
+      </section>
       <div className="grid gap-3">
         <Label>Logotipo</Label>
         <div className="flex flex-wrap items-center gap-4">

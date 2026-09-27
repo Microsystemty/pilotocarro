@@ -22,6 +22,9 @@ export function SiteFooter() {
             className="mt-4 grid gap-2 text-sm text-muted-foreground"
             aria-label="Links do rodapé"
           >
+            <Link to="/a-loja" className="hover:text-foreground">
+              A loja
+            </Link>
             <Link to="/estoque" className="hover:text-foreground">
               Estoque
             </Link>

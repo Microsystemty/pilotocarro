@@ -9,6 +9,8 @@ export type StoreSettings = {
   hours: string;
   logo: string;
   brands: string[];
+  aboutVideoUrl: string;
+  customerGallery: string[];
 };
 
 export const defaultStoreSettings: StoreSettings = {
@@ -19,6 +21,8 @@ export const defaultStoreSettings: StoreSettings = {
   address: "Av. Europa, 1000",
   hours: "Segunda a sábado, 9h às 18h",
   logo: "",
+  aboutVideoUrl: "",
+  customerGallery: [],
   brands: [
     "Chevrolet",
     "Fiat",
