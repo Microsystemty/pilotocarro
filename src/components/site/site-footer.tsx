@@ -41,8 +41,8 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold uppercase text-foreground">Atendimento</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-             <span className="flex items-start gap-2">
-               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {settings.address}
+            <span className="flex items-start gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {settings.address}
             </span>
             <span className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" /> {settings.hours}
@@ -62,6 +62,36 @@ export function SiteFooter() {
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </a>
           </div>
+        </div>
+      </div>
+      <div className="border-t border-border/60">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>
+            © {new Date().getFullYear()} {settings.name}. Todos os direitos reservados.
+          </p>
+          <a
+            href="https://vextty.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Conheça a Vextty — Sistemas e Tecnologia"
+            className="group inline-flex w-fit items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <span className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+              Desenvolvido por
+            </span>
+            <span className="vextty-mark vextty-mark-small" aria-hidden="true">
+              <i />
+              <i />
+            </span>
+            <span className="leading-none">
+              <strong className="block text-sm font-bold tracking-[0.12em] text-foreground transition-colors group-hover:text-[#27bfff]">
+                VEXTTY
+              </strong>
+              <small className="block text-[7px] tracking-[0.22em] text-muted-foreground">
+                SISTEMAS &amp; TECNOLOGIA
+              </small>
+            </span>
+          </a>
         </div>
       </div>
     </footer>
