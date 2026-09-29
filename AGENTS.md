@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep catalog and store-management data local and demonstrative; no database or external persistence. This preserves the requested lightweight prototype behavior.

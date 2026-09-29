@@ -12,8 +12,7 @@ export function SiteFooter() {
             {settings.name}
           </p>
           <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-            Base visual para uma revenda premium, preparada para evoluir com cadastro de veículos,
-            gestão de estoque e integrações futuras.
+            Veículos selecionados e informações organizadas para uma escolha tranquila.
           </p>
         </div>
         <div>
@@ -42,8 +41,8 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold uppercase text-foreground">Atendimento</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" /> {settings.address}
+             <span className="flex items-start gap-2">
+               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {settings.address}
             </span>
             <span className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" /> {settings.hours}

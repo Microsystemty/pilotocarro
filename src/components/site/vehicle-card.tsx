@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, Fuel, Gauge, Heart, Scale, Settings } from "lucide-react";
+import { CalendarDays, CheckCircle2, Fuel, Gauge, Heart, Scale, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +19,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const favorite = favorites.includes(vehicle.slug);
   const comparing = compare.includes(vehicle.slug);
   return (
-    <Card className="vehicle-card-premium group overflow-hidden rounded-2xl border-border bg-card shadow-card transition duration-500 hover:-translate-y-2 hover:border-primary/60 hover:shadow-premium">
+    <Card className="vehicle-card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border-border bg-card shadow-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-premium">
       <Link
         to="/estoque/$slug"
         params={{ slug: vehicle.slug }}
@@ -34,39 +34,44 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             height={800}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
-          <div className="absolute left-3 top-3 z-10 flex gap-2">
+           <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-2">
+             <Badge variant="secondary" className="gap-1 bg-background/90 backdrop-blur">
+               <CheckCircle2 className="h-3.5 w-3.5 text-whatsapp" />
+               {statusLabels[vehicle.status ?? "available"]}
+             </Badge>
             {vehicle.tag && vehicle.tag !== "none" && <Badge>{tagLabels[vehicle.tag]}</Badge>}
-            {vehicle.status && vehicle.status !== "available" && (
-              <Badge variant="secondary">{statusLabels[vehicle.status]}</Badge>
-            )}
           </div>
           <div className="absolute right-3 top-3 z-10 flex gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon"
               onClick={(event) => {
                 event.preventDefault();
                 toggleFavorite(vehicle.slug);
               }}
-              className="grid h-10 w-10 place-items-center rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur hover:text-primary"
+              className="h-11 w-11 rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur hover:text-primary"
               aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             >
               <Heart className={`h-5 w-5 ${favorite ? "fill-primary text-primary" : ""}`} />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="icon"
               onClick={(event) => {
                 event.preventDefault();
                 toggleCompare(vehicle.slug);
               }}
-              className={`grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-lg backdrop-blur ${comparing ? "text-primary" : "text-foreground hover:text-primary"}`}
+              className={`h-11 w-11 rounded-full bg-background/90 shadow-lg backdrop-blur ${comparing ? "text-primary" : "text-foreground hover:text-primary"}`}
               aria-label={comparing ? "Remover da comparação" : "Adicionar à comparação"}
             >
               <Scale className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
         </div>
       </Link>
-      <CardContent className="p-5 sm:p-6">
+       <CardContent className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <div className="min-w-0">
             <p className="truncate text-xs font-extrabold uppercase tracking-[0.16em] text-primary">
@@ -81,7 +86,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             {vehicle.body}
           </Badge>
         </div>
-        <p className="mt-5 inline-flex rounded-lg bg-primary px-3 py-2 font-display text-2xl font-extrabold text-primary-foreground">
+         <p className="mt-5 font-sans text-2xl font-extrabold text-foreground">
           {formatCurrency(vehicle.price)}
         </p>
         <div className="mt-5 grid grid-cols-2 gap-3 text-sm text-muted-foreground">
@@ -99,7 +104,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             {vehicle.additionalFuel ? ` + ${vehicle.additionalFuel}` : ""}
           </span>
         </div>
-        <Button asChild variant="premium" className="mt-5 w-full rounded-full font-bold">
+         <Button asChild variant="premium" className="mt-auto w-full rounded-full font-bold">
           <Link to="/estoque/$slug" params={{ slug: vehicle.slug }}>
             Ver detalhes
           </Link>

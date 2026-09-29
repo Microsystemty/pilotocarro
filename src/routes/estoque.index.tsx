@@ -30,6 +30,7 @@ export const Route = createFileRoute("/estoque/")({
         content: "Veja veículos disponíveis em uma vitrine organizada e responsiva.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: StockPage,

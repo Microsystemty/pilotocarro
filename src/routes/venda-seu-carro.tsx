@@ -44,7 +44,7 @@ function SellPage() {
               </div>
             ))}
           </div>
-          <form className="border border-border bg-card p-5 shadow-premium sm:p-8">
+          <form className="rounded-xl border border-border bg-card p-5 shadow-premium sm:p-8" onSubmit={(event) => event.preventDefault()}>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="grid gap-2"><Label htmlFor="nome">Nome</Label><Input id="nome" placeholder="Seu nome" /></div>
               <div className="grid gap-2"><Label htmlFor="telefone">Telefone</Label><Input id="telefone" placeholder="(00) 00000-0000" /></div>
@@ -55,7 +55,7 @@ function SellPage() {
               <div className="grid gap-2 sm:col-span-2"><Label htmlFor="obs-venda">Observações</Label><Textarea id="obs-venda" placeholder="Conte estado geral, opcionais e histórico." /></div>
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button type="button" variant="premium" size="lg">Enviar avaliação</Button>
+              <Button type="submit" variant="premium" size="lg">Enviar avaliação</Button>
               <WhatsAppButton message="Olá, quero vender meu carro e gostaria de uma avaliação." />
             </div>
           </form>

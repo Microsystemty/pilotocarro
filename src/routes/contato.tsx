@@ -41,14 +41,14 @@ function ContactPage() {
             </div>
             <div className="mt-8"><WhatsAppButton message="Olá, quero atendimento da Prime Motors." /></div>
           </div>
-          <form className="border border-border bg-card p-5 shadow-premium sm:p-8">
+          <form className="rounded-xl border border-border bg-card p-5 shadow-premium sm:p-8" onSubmit={(event) => event.preventDefault()}>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="grid gap-2"><Label htmlFor="nome-contato">Nome</Label><Input id="nome-contato" placeholder="Seu nome" /></div>
               <div className="grid gap-2"><Label htmlFor="telefone-contato">Telefone</Label><Input id="telefone-contato" placeholder="(00) 00000-0000" /></div>
               <div className="grid gap-2 sm:col-span-2"><Label htmlFor="email-contato">E-mail</Label><Input id="email-contato" placeholder="seu@email.com" /></div>
               <div className="grid gap-2 sm:col-span-2"><Label htmlFor="mensagem-contato">Mensagem</Label><Textarea id="mensagem-contato" placeholder="Como podemos ajudar?" /></div>
             </div>
-            <Button type="button" variant="premium" size="lg" className="mt-6">Enviar mensagem</Button>
+            <Button type="submit" variant="premium" size="lg" className="mt-6 w-full sm:w-auto">Enviar mensagem</Button>
           </form>
         </div>
       </section>

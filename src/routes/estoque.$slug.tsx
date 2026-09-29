@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
+import { VehicleCard } from "@/components/site/vehicle-card";
 import { formatCurrency, formatMileage } from "@/data/vehicles";
 import { useVehicles } from "@/hooks/use-vehicles";
 
@@ -30,6 +31,9 @@ export const Route = createFileRoute("/estoque/$slug")({
       { title: "Detalhes do veículo — Prime Motors" },
       { name: "description", content: "Veja fotos, preço e informações completas do veículo." },
       { property: "og:type", content: "website" },
+      { property: "og:title", content: "Detalhes do veículo — Prime Motors" },
+      { property: "og:description", content: "Veja fotos, preço e informações completas do veículo." },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: VehicleDetailPage,
@@ -84,6 +88,14 @@ function VehicleDetailPage() {
     },
   ];
   const currentImageIndex = Math.max(0, gallery.indexOf(selectedImage));
+  const relatedVehicles = vehicles
+    .filter(
+      (item) =>
+        item.slug !== vehicle.slug &&
+        item.status !== "hidden" &&
+        (item.body === vehicle.body || item.brand === vehicle.brand),
+    )
+    .slice(0, 3);
   const financedAmount = vehicle.price * (1 - entry / 100);
   const monthlyRate = 0.0149;
   const installment =
@@ -114,10 +126,11 @@ function VehicleDetailPage() {
         </Button>
         <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setLightboxOpen(true)}
-              className="group relative block w-full overflow-hidden rounded-2xl border border-border bg-muted text-left shadow-card"
+              className="group relative block h-auto min-h-0 w-full overflow-hidden rounded-xl border border-border bg-muted p-0 text-left shadow-card"
             >
               <img
                 src={selectedImage || gallery[0]}
@@ -127,7 +140,7 @@ function VehicleDetailPage() {
               <span className="absolute bottom-4 right-4 flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-bold text-foreground opacity-100 backdrop-blur sm:opacity-0 sm:transition sm:group-hover:opacity-100">
                 <ZoomIn className="h-4 w-4" /> Ampliar
               </span>
-            </button>
+            </Button>
             <div className="mt-4 flex items-center justify-between gap-3">
               <p className="flex items-center gap-2 font-semibold text-foreground">
                 <Images className="h-5 w-5 text-primary" /> Todas as fotos
@@ -138,11 +151,12 @@ function VehicleDetailPage() {
             </div>
             <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
               {gallery.map((image, index) => (
-                <button
+                 <Button
                   type="button"
+                   variant="ghost"
                   key={`${vehicle.slug}-${index}`}
                   onClick={() => setSelectedImage(image)}
-                  className={`overflow-hidden rounded-lg border-2 bg-muted transition ${selectedImage === image ? "border-primary" : "border-border hover:border-primary/60"}`}
+                   className={`h-auto min-h-0 overflow-hidden rounded-lg border-2 bg-muted p-0 transition ${selectedImage === image ? "border-primary" : "border-border hover:border-primary/60"}`}
                   aria-label={`Exibir foto ${index + 1}`}
                 >
                   <img
@@ -151,7 +165,7 @@ function VehicleDetailPage() {
                     loading="lazy"
                     className="aspect-[4/3] w-full object-cover"
                   />
-                </button>
+                 </Button>
               ))}
             </div>
             {vehicle.imageCredit && (
@@ -312,6 +326,16 @@ function VehicleDetailPage() {
             </div>
           </div>
         </section>
+
+        {!!relatedVehicles.length && (
+          <section className="mt-16 border-t border-border pt-12">
+            <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-primary">Outras opções</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-foreground">Veículos relacionados</h2>
+            <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {relatedVehicles.map((item) => <VehicleCard key={item.slug} vehicle={item} />)}
+            </div>
+          </section>
+        )}
       </section>
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-6xl border-0 bg-black/95 p-3">
@@ -328,9 +352,11 @@ function VehicleDetailPage() {
               variant="outline"
               size="icon"
               className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full"
-              onClick={() =>
-                setSelectedImage(gallery[(currentImageIndex - 1 + gallery.length) % gallery.length])
-              }
+              aria-label="Foto anterior"
+              onClick={() => {
+                const previous = gallery[(currentImageIndex - 1 + gallery.length) % gallery.length];
+                if (previous) setSelectedImage(previous);
+              }}
             >
               <ChevronLeft />
             </Button>
@@ -338,7 +364,11 @@ function VehicleDetailPage() {
               variant="outline"
               size="icon"
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
-              onClick={() => setSelectedImage(gallery[(currentImageIndex + 1) % gallery.length])}
+              aria-label="Próxima foto"
+              onClick={() => {
+                const next = gallery[(currentImageIndex + 1) % gallery.length];
+                if (next) setSelectedImage(next);
+              }}
             >
               <ChevronRight />
             </Button>
