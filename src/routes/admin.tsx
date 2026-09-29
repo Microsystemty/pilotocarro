@@ -201,7 +201,7 @@ function VehicleFormDialog({
       additionalFuel: form.additionalFuel === "none" ? undefined : form.additionalFuel?.trim(),
       body: form.body.trim(),
       featured: form.featured,
-      image: form.gallery[0],
+      image: form.gallery[0] ?? "",
       gallery: form.gallery,
       highlights: form.highlights
         .split(",")
@@ -519,7 +519,11 @@ function VehicleFormDialog({
                         aria-label="Mover foto para a esquerda"
                         onClick={() => {
                           const next = [...form.gallery];
-                          [next[index - 1], next[index]] = [next[index], next[index - 1]];
+                           const current = next[index];
+                           const previous = next[index - 1];
+                           if (!current || !previous) return;
+                           next[index - 1] = current;
+                           next[index] = previous;
                           update("gallery", next);
                         }}
                       >
@@ -532,7 +536,11 @@ function VehicleFormDialog({
                         aria-label="Mover foto para a direita"
                         onClick={() => {
                           const next = [...form.gallery];
-                          [next[index], next[index + 1]] = [next[index + 1], next[index]];
+                           const current = next[index];
+                           const following = next[index + 1];
+                           if (!current || !following) return;
+                           next[index] = following;
+                           next[index + 1] = current;
                           update("gallery", next);
                         }}
                       >
@@ -819,7 +827,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   return (
     <main className="min-h-screen bg-surface py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
           <div>
             <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
               Área reservada
@@ -843,7 +851,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         </div>
 
         <Tabs defaultValue="dashboard" className="mt-8">
-          <TabsList className="h-auto w-full justify-start gap-1 bg-card p-1.5 shadow-card sm:w-auto">
+          <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto bg-card p-1.5 shadow-card sm:w-auto">
             <TabsTrigger value="dashboard" className="gap-2 px-4 py-2.5">
               <LayoutDashboard className="h-4 w-4" /> Dashboard
             </TabsTrigger>

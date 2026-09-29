@@ -9,7 +9,6 @@ import {
   HandCoins,
   Search,
   ShieldCheck,
-  Star,
 } from "lucide-react";
 import heroImage from "@/assets/auto-hero.jpg";
 import { AnimatedCarShowcase } from "@/components/site/animated-car-showcase";
@@ -91,16 +90,16 @@ function Index() {
             </div>
             <div className="hero-metrics mt-12 grid max-w-2xl grid-cols-3 gap-2 text-hero-muted sm:gap-3">
               <div className="border-l border-hero-line pl-4">
-                <p className="font-display text-2xl font-semibold text-hero-foreground">+40</p>
-                <p className="text-sm">veículos no padrão</p>
+                <p className="font-sans text-sm font-bold text-hero-foreground">Seleção cuidadosa</p>
+                <p className="text-sm">para diferentes perfis</p>
               </div>
               <div className="border-l border-hero-line pl-4">
-                <p className="font-display text-2xl font-semibold text-hero-foreground">100%</p>
-                <p className="text-sm">procedência analisada</p>
+                <p className="font-sans text-sm font-bold text-hero-foreground">Informações claras</p>
+                <p className="text-sm">em cada anúncio</p>
               </div>
               <div className="border-l border-hero-line pl-4">
-                <p className="font-display text-2xl font-semibold text-hero-foreground">24h</p>
-                <p className="text-sm">retorno comercial</p>
+                <p className="font-sans text-sm font-bold text-hero-foreground">Contato direto</p>
+                <p className="text-sm">pelos canais da loja</p>
               </div>
             </div>
           </div>
@@ -285,48 +284,6 @@ function Index() {
           </div>
         </section>
       )}
-
-      <section className="border-y border-border bg-surface py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
-              Quem compra recomenda
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
-              Confiança em cada entrega
-            </h2>
-          </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {[
-              {
-                name: "Mariana Costa",
-                text: "Atendimento transparente e o carro estava exatamente como anunciado.",
-              },
-              {
-                name: "Rafael Almeida",
-                text: "Processo rápido, equipe atenciosa e ótima experiência na negociação.",
-              },
-              {
-                name: "Lucas Ferreira",
-                text: "Consegui comparar as opções e fechar o financiamento com tranquilidade.",
-              },
-            ].map((testimonial) => (
-              <article
-                key={testimonial.name}
-                className="rounded-2xl border border-border bg-card p-6 shadow-card"
-              >
-                <div className="flex gap-1 text-primary">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star key={index} className="h-4 w-4 fill-current" />
-                  ))}
-                </div>
-                <p className="mt-5 leading-7 text-muted-foreground">“{testimonial.text}”</p>
-                <p className="mt-5 font-bold text-foreground">{testimonial.name}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="bg-background py-14">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
