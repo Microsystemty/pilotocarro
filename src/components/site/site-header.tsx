@@ -29,10 +29,10 @@ function BrandMark({ name, tagline, logo }: { name: string; tagline: string; log
         )}
       </span>
       <span className="min-w-0">
-        <span className="block truncate font-display text-base font-extrabold uppercase tracking-[0.16em] text-foreground sm:text-lg">
+        <span className="block truncate font-display text-sm font-extrabold uppercase tracking-[0.12em] text-foreground sm:text-lg">
           {name}
         </span>
-        <span className="block truncate text-xs font-medium uppercase text-muted-foreground">
+        <span className="hidden truncate text-xs font-medium uppercase text-muted-foreground min-[360px]:block">
           {tagline}
         </span>
       </span>
@@ -82,7 +82,7 @@ function MobileNav() {
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
               onClick={() => setOpen(false)}
-              className="rounded-md px-3 py-3 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="flex min-h-12 items-center rounded-md px-3 py-3 text-base font-bold text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               activeProps={{ className: "bg-muted text-foreground" }}
             >
               {item.label}
@@ -109,7 +109,7 @@ export function SiteHeader() {
           </span>
         </div>
       </div>
-      <div className="mx-auto grid h-20 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-6 lg:flex lg:justify-between lg:px-8">
+       <div className="mx-auto grid h-[4.5rem] max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:h-20 sm:px-6 lg:flex lg:justify-between lg:px-8">
         <BrandMark name={settings.name} tagline={settings.tagline} logo={settings.logo} />
         <DesktopNav />
         <div className="hidden items-center gap-2 lg:flex">

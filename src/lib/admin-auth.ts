@@ -34,12 +34,12 @@ const DEFAULT_SESSION_SECRET = "prime-motors-admin-session-2026-8f4d9c2a7e1b6f3d
 function sessionConfig() {
   return {
     name: "prime-motors-admin",
-    password: process.env.ADMIN_SESSION_SECRET ?? DEFAULT_SESSION_SECRET,
+    password: process.env['ADMIN_SESSION_SECRET'] ?? DEFAULT_SESSION_SECRET,
     maxAge: 60 * 60 * 8,
     cookie: {
       httpOnly: true,
       sameSite: "strict" as const,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env['NODE_ENV'] === "production",
       path: "/",
     },
   };
@@ -82,8 +82,8 @@ export const getAdminSession = createServerFn({ method: "GET" }).handler(async (
 export const loginAdmin = createServerFn({ method: "POST" })
   .validator((input: LoginInput) => input)
   .handler(async ({ data }) => {
-    const expectedUsername = process.env.ADMIN_USERNAME ?? DEFAULT_USERNAME;
-    const expectedPasswordHash = process.env.ADMIN_PASSWORD_HASH ?? DEFAULT_PASSWORD_HASH;
+    const expectedUsername = process.env['ADMIN_USERNAME'] ?? DEFAULT_USERNAME;
+    const expectedPasswordHash = process.env['ADMIN_PASSWORD_HASH'] ?? DEFAULT_PASSWORD_HASH;
     const suppliedHash = await sha256(data.password);
     const isMainAdmin =
       safeEqual(data.username.trim(), expectedUsername) &&
@@ -113,7 +113,7 @@ export const logoutAdmin = createServerFn({ method: "POST" }).handler(async () =
 export const listAdminUsers = createServerFn({ method: "GET" }).handler(async () => {
   await requireAdminSession();
   const directory = await getServerSession<UserDirectory>(usersConfig());
-  const mainUsername = process.env.ADMIN_USERNAME ?? DEFAULT_USERNAME;
+  const mainUsername = process.env['ADMIN_USERNAME'] ?? DEFAULT_USERNAME;
   return [
     { username: mainUsername, createdAt: "Administrador principal", removable: false },
     ...(directory.data.users ?? []).map((user) => ({
@@ -139,7 +139,7 @@ export const createAdminUser = createServerFn({ method: "POST" })
       return { success: false, error: "A senha precisa ter pelo menos 8 caracteres." };
     }
 
-    const mainUsername = (process.env.ADMIN_USERNAME ?? DEFAULT_USERNAME).toLowerCase();
+    const mainUsername = (process.env['ADMIN_USERNAME'] ?? DEFAULT_USERNAME).toLowerCase();
     const directory = await getServerSession<UserDirectory>(usersConfig());
     const currentUsers = directory.data.users ?? [];
     if (username === mainUsername || currentUsers.some((user) => user.username === username)) {

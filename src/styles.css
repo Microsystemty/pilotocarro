@@ -75,7 +75,7 @@
 
 :root {
   --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
   --radius: 0.75rem;
   --background: oklch(0.125 0.006 25);
   --foreground: oklch(0.985 0.002 25);
@@ -193,6 +193,24 @@
     font-family: var(--font-body);
     min-width: 320px;
     overflow-x: clip;
+    line-height: 1.6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
   }
 
   img,
@@ -589,6 +607,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
   .hero-copy,
   .hero-light-sweep,
   .car-showcase,

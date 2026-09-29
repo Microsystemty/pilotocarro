@@ -57,12 +57,14 @@ function refreshDemoCatalogImages(currentVehicles: Vehicle[]) {
     const demoVehicle = demoVehiclesBySlug.get(vehicle.slug);
     if (!demoVehicle) return vehicle;
 
-    return {
+    const refreshed: Vehicle = {
       ...vehicle,
       image: demoVehicle.image,
       gallery: demoVehicle.gallery,
-      imageCredit: demoVehicle.imageCredit,
     };
+    if (demoVehicle.imageCredit) refreshed.imageCredit = demoVehicle.imageCredit;
+    else delete refreshed.imageCredit;
+    return refreshed;
   });
 
   window.localStorage.setItem(DEMO_CATALOG_IMAGE_REFRESH_KEY, "true");

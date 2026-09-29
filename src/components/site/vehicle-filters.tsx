@@ -54,10 +54,10 @@ export function VehicleFilters({
     onChange({ ...value, [key]: next });
   return (
     <section
-      className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5"
+      className="rounded-xl border border-border bg-card p-4 shadow-card sm:p-5"
       aria-label="Filtros de veículos"
     >
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <p className="flex items-center gap-2 font-bold text-foreground">
           <SlidersHorizontal className="h-5 w-5 text-primary" /> Filtrar estoque
         </p>
@@ -65,7 +65,7 @@ export function VehicleFilters({
           <RotateCcw /> Limpar
         </Button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <FilterSelect
           label="Marca"
           value={value.brand}
@@ -137,12 +137,12 @@ export function VehicleFilters({
           hideAll
         />
       </div>
-      <label className="mt-4 inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-muted-foreground">
+      <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-border px-3 text-sm font-medium text-muted-foreground focus-within:ring-2 focus-within:ring-ring">
         <input
           type="checkbox"
           checked={value.favoritesOnly}
           onChange={(event) => update("favoritesOnly", event.target.checked)}
-          className="h-4 w-4 accent-red-600"
+          className="h-5 w-5 accent-primary"
         />{" "}
         Somente favoritos
       </label>
