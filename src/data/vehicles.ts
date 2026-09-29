@@ -6,6 +6,7 @@ import suvImage from "@/assets/vehicle-suv.jpg";
 
 export type Vehicle = {
   slug: string;
+  vehicleType?: "car" | "motorcycle";
   brand: string;
   model: string;
   version: string;

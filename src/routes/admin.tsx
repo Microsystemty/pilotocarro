@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { Fragment, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Edit3,
@@ -104,6 +104,7 @@ type VehicleForm = Omit<Vehicle, "slug" | "image" | "gallery" | "highlights"> & 
 };
 
 const emptyForm: VehicleForm = {
+  vehicleType: "car",
   brand: "",
   model: "",
   version: "",
@@ -127,6 +128,7 @@ const emptyForm: VehicleForm = {
 function vehicleToForm(vehicle: Vehicle): VehicleForm {
   return {
     ...vehicle,
+    vehicleType: vehicle.vehicleType ?? "car",
     body: vehicle.body === "Sedan" ? "Sedã" : vehicle.body === "Pickup" ? "Picape" : vehicle.body,
     gallery: vehicle.gallery.length ? vehicle.gallery : [vehicle.image],
     highlights: vehicle.highlights.join(", "),
@@ -190,6 +192,7 @@ function VehicleFormDialog({
 
     const savedVehicle: Vehicle = {
       slug: form.slug ?? createVehicleSlug(form.brand, form.model),
+      vehicleType: form.vehicleType ?? "car",
       brand: form.brand.trim(),
       model: form.model.trim(),
       version: form.version.trim(),
@@ -237,6 +240,20 @@ function VehicleFormDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <FormField label="Tipo de veículo" required>
+              <Select
+                value={form.vehicleType ?? "car"}
+                onValueChange={(value: "car" | "motorcycle") => update("vehicleType", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="car">Carro</SelectItem>
+                  <SelectItem value="motorcycle">Moto</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormField>
             <FormField label="Marca" required>
               <Select
                 value={addingBrand ? "__new" : form.brand}
@@ -761,17 +778,38 @@ function AdminLogin({ onAuthenticated }: { onAuthenticated: () => void }) {
 function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const { vehicles, saveVehicle, deleteVehicle, replaceVehicles } = useVehicles();
   const [search, setSearch] = useState("");
+  const [vehicleTypeFilter, setVehicleTypeFilter] = useState<"car" | "motorcycle">("car");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [feedback, setFeedback] = useState("");
 
   const filteredVehicles = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return vehicles;
-    return vehicles.filter((vehicle) =>
-      `${vehicle.brand} ${vehicle.model} ${vehicle.version}`.toLowerCase().includes(term),
-    );
-  }, [search, vehicles]);
+    return vehicles.filter((vehicle) => {
+      const type = vehicle.vehicleType ?? "car";
+      const matchesType = type === vehicleTypeFilter;
+      const matchesSearch =
+        !term || `${vehicle.brand} ${vehicle.model} ${vehicle.version}`.toLowerCase().includes(term);
+      return matchesType && matchesSearch;
+    });
+  }, [search, vehicleTypeFilter, vehicles]);
+
+  const groupedVehicles = useMemo(() => {
+    const groups = new Map<string, Vehicle[]>();
+    filteredVehicles.forEach((vehicle) => {
+      const current = groups.get(vehicle.brand) ?? [];
+      current.push(vehicle);
+      groups.set(vehicle.brand, current);
+    });
+    return [...groups.entries()]
+      .sort(([left], [right]) => left.localeCompare(right, "pt-BR"))
+      .map(([brand, brandVehicles]) => [
+        brand,
+        brandVehicles.sort((left, right) =>
+          `${left.model} ${left.version}`.localeCompare(`${right.model} ${right.version}`, "pt-BR"),
+        ),
+      ] as const);
+  }, [filteredVehicles]);
 
   const openNewVehicle = () => {
     setEditingVehicle(null);
@@ -936,6 +974,29 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   <Badge variant="outline">{filteredVehicles.length} resultado(s)</Badge>
                 </div>
               </div>
+              <div className="border-b border-border bg-muted/20 px-4 py-3 sm:px-5">
+                <Tabs
+                  value={vehicleTypeFilter}
+                  onValueChange={(value) =>
+                    setVehicleTypeFilter(value as "car" | "motorcycle")
+                  }
+                >
+                  <TabsList className="h-auto w-full justify-start gap-1 bg-background p-1 sm:w-auto">
+                    <TabsTrigger value="car" className="gap-2 px-5">
+                      Carros
+                      <Badge variant="secondary">
+                        {vehicles.filter((vehicle) => (vehicle.vehicleType ?? "car") === "car").length}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="motorcycle" className="gap-2 px-5">
+                      Motos
+                      <Badge variant="secondary">
+                        {vehicles.filter((vehicle) => vehicle.vehicleType === "motorcycle").length}
+                      </Badge>
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -948,7 +1009,19 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredVehicles.map((vehicle) => (
+                    {groupedVehicles.map(([brand, brandVehicles]) => (
+                      <Fragment key={brand}>
+                        <TableRow className="border-y border-border bg-muted/50 hover:bg-muted/50">
+                          <TableCell colSpan={5} className="py-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-display text-base font-extrabold text-foreground">
+                                {brand}
+                              </span>
+                              <Badge variant="outline">{brandVehicles.length}</Badge>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        {brandVehicles.map((vehicle) => (
                       <TableRow key={vehicle.slug}>
                         <TableCell className="min-w-64">
                           <div className="flex items-center gap-3">
@@ -1052,6 +1125,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           </div>
                         </TableCell>
                       </TableRow>
+                        ))}
+                      </Fragment>
                     ))}
                   </TableBody>
                 </Table>
