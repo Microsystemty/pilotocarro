@@ -198,7 +198,9 @@ function VehicleFormDialog({
       mileage: Number(form.mileage),
       transmission: form.transmission.trim(),
       fuel: form.fuel.trim(),
-      additionalFuel: form.additionalFuel === "none" ? undefined : form.additionalFuel?.trim(),
+      ...(form.additionalFuel && form.additionalFuel !== "none"
+        ? { additionalFuel: form.additionalFuel.trim() }
+        : {}),
       body: form.body.trim(),
       featured: form.featured,
       image: form.gallery[0] ?? "",
