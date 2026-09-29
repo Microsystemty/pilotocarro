@@ -149,11 +149,13 @@ function VehicleFormDialog({
 }) {
   const { settings, saveSettings } = useStoreSettings();
   const [form, setForm] = useState<VehicleForm>(vehicle ? vehicleToForm(vehicle) : emptyForm);
+  const initialBrands =
+    vehicle?.vehicleType === "motorcycle" ? settings.motorcycleBrands : settings.brands;
   const [addingBrand, setAddingBrand] = useState(
-    Boolean(vehicle?.brand && !settings.brands.includes(vehicle.brand)),
+    Boolean(vehicle?.brand && !initialBrands.includes(vehicle.brand)),
   );
   const [newBrand, setNewBrand] = useState(
-    vehicle?.brand && !settings.brands.includes(vehicle.brand) ? vehicle.brand : "",
+    vehicle?.brand && !initialBrands.includes(vehicle.brand) ? vehicle.brand : "",
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -161,6 +163,8 @@ function VehicleFormDialog({
   const update = <K extends keyof VehicleForm>(key: K, value: VehicleForm[K]) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
+  const availableBrands =
+    form.vehicleType === "motorcycle" ? settings.motorcycleBrands : settings.brands;
 
   const handleImages = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -243,7 +247,11 @@ function VehicleFormDialog({
             <FormField label="Tipo de veículo" required>
               <Select
                 value={form.vehicleType ?? "car"}
-                onValueChange={(value: "car" | "motorcycle") => update("vehicleType", value)}
+                onValueChange={(value: "car" | "motorcycle") => {
+                  setForm((current) => ({ ...current, vehicleType: value, brand: "" }));
+                  setAddingBrand(false);
+                  setNewBrand("");
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -272,7 +280,7 @@ function VehicleFormDialog({
                   <SelectValue placeholder="Selecione a marca" />
                 </SelectTrigger>
                 <SelectContent>
-                  {settings.brands.map((brand) => (
+                  {availableBrands.map((brand) => (
                     <SelectItem key={brand} value={brand}>
                       {brand}
                     </SelectItem>
@@ -294,7 +302,7 @@ function VehicleFormDialog({
                     onClick={() => {
                       const brand = newBrand.trim();
                       if (!brand) return;
-                      const brands = [...settings.brands, brand]
+                      const brands = [...availableBrands, brand]
                         .filter(
                           (item, index, items) =>
                             items.findIndex(
@@ -304,7 +312,11 @@ function VehicleFormDialog({
                             ) === index,
                         )
                         .sort((a, b) => a.localeCompare(b, "pt-BR"));
-                      saveSettings({ ...settings, brands });
+                      saveSettings(
+                        form.vehicleType === "motorcycle"
+                          ? { ...settings, motorcycleBrands: brands }
+                          : { ...settings, brands },
+                      );
                       update("brand", brand);
                       setAddingBrand(false);
                     }}
@@ -1549,6 +1561,9 @@ function StoreSettingsPanel() {
   const { settings, saveSettings } = useStoreSettings();
   const [form, setForm] = useState(settings);
   const [brandsText, setBrandsText] = useState(settings.brands.join(", "));
+  const [motorcycleBrandsText, setMotorcycleBrandsText] = useState(
+    settings.motorcycleBrands.join(", "),
+  );
   const [feedback, setFeedback] = useState("");
 
   const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
@@ -1570,6 +1585,11 @@ function StoreSettingsPanel() {
         saveSettings({
           ...form,
           brands: brandsText
+            .split(",")
+            .map((brand) => brand.trim())
+            .filter(Boolean)
+            .filter((brand, index, brands) => brands.indexOf(brand) === index),
+          motorcycleBrands: motorcycleBrandsText
             .split(",")
             .map((brand) => brand.trim())
             .filter(Boolean)
@@ -1624,7 +1644,7 @@ function StoreSettingsPanel() {
           />
         </FormField>
       </div>
-      <FormField label="Marcas pré-definidas">
+      <FormField label="Marcas de carros">
         <Textarea
           value={brandsText}
           onChange={(event) => setBrandsText(event.target.value)}
@@ -1632,8 +1652,18 @@ function StoreSettingsPanel() {
           className="min-h-24"
         />
         <p className="text-xs text-muted-foreground">
-          Separe as marcas por vírgulas. Elas aparecerão como opções rápidas no cadastro de
-          veículos.
+          Separe as marcas por vírgulas. Elas aparecerão quando o tipo selecionado for “Carro”.
+        </p>
+      </FormField>
+      <FormField label="Marcas de motos">
+        <Textarea
+          value={motorcycleBrandsText}
+          onChange={(event) => setMotorcycleBrandsText(event.target.value)}
+          placeholder="Honda, Yamaha, Kawasaki, BMW Motorrad"
+          className="min-h-28"
+        />
+        <p className="text-xs text-muted-foreground">
+          Separe as marcas por vírgulas. Elas aparecerão quando o tipo selecionado for “Moto”.
         </p>
       </FormField>
       <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
@@ -1755,6 +1785,7 @@ function StoreSettingsPanel() {
           onClick={() => {
             setForm(defaultStoreSettings);
             setBrandsText(defaultStoreSettings.brands.join(", "));
+            setMotorcycleBrandsText(defaultStoreSettings.motorcycleBrands.join(", "));
           }}
         >
           Restaurar padrão

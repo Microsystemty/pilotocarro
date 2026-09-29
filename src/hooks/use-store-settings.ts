@@ -9,6 +9,7 @@ export type StoreSettings = {
   hours: string;
   logo: string;
   brands: string[];
+  motorcycleBrands: string[];
   aboutVideoUrl: string;
   customerGallery: string[];
 };
@@ -33,6 +34,27 @@ export const defaultStoreSettings: StoreSettings = {
     "Nissan",
     "Toyota",
     "Volkswagen",
+  ],
+  motorcycleBrands: [
+    "Honda",
+    "Yamaha",
+    "Shineray",
+    "Haojue",
+    "Bajaj",
+    "Royal Enfield",
+    "BMW Motorrad",
+    "Triumph",
+    "Kawasaki",
+    "Dafra",
+    "Zontes",
+    "Suzuki",
+    "Ducati",
+    "Harley-Davidson",
+    "KTM",
+    "Husqvarna",
+    "TVS Motor Company",
+    "Benelli",
+    "Piaggio / Vespa",
   ],
 };
 
