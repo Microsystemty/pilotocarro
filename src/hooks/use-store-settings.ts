@@ -25,15 +25,44 @@ export const defaultStoreSettings: StoreSettings = {
   aboutVideoUrl: "",
   customerGallery: [],
   brands: [
+    "Audi",
+    "BMW",
+    "BYD",
+    "CAOA Chery",
     "Chevrolet",
+    "Chrysler",
+    "Citroën",
+    "Dodge",
     "Fiat",
     "Ford",
+    "GAC",
+    "Geely",
+    "GWM",
     "Honda",
     "Hyundai",
+    "JAC Motors",
+    "Jaecoo",
     "Jeep",
+    "Jaguar",
+    "Kia",
+    "Land Rover",
+    "Lexus",
+    "Mercedes-Benz",
+    "MINI",
+    "Mitsubishi",
     "Nissan",
+    "Omoda",
+    "Peugeot",
+    "Porsche",
+    "RAM",
+    "Renault",
+    "Subaru",
+    "Suzuki",
+    "Troller",
     "Toyota",
     "Volkswagen",
+    "Volvo",
+    "Zeekr",
   ],
   motorcycleBrands: [
     "Honda",
@@ -60,11 +89,23 @@ export const defaultStoreSettings: StoreSettings = {
 
 const storageKey = "prime-motors-store-settings";
 const eventName = "prime-motors-settings-change";
+const carBrandCatalogMigrationKey = "prime-motors-car-brands-v2";
 
 function readSettings() {
   if (typeof window === "undefined") return defaultStoreSettings;
   try {
-    return { ...defaultStoreSettings, ...JSON.parse(localStorage.getItem(storageKey) ?? "{}") };
+    const stored = JSON.parse(localStorage.getItem(storageKey) ?? "{}") as Partial<StoreSettings>;
+    const settings = { ...defaultStoreSettings, ...stored };
+
+    if (!localStorage.getItem(carBrandCatalogMigrationKey)) {
+      settings.brands = [...new Set([...defaultStoreSettings.brands, ...(stored.brands ?? [])])].sort(
+        (left, right) => left.localeCompare(right, "pt-BR"),
+      );
+      localStorage.setItem(storageKey, JSON.stringify(settings));
+      localStorage.setItem(carBrandCatalogMigrationKey, "true");
+    }
+
+    return settings;
   } catch {
     return defaultStoreSettings;
   }
