@@ -28,7 +28,7 @@ type DeleteUserInput = {
 };
 
 const DEFAULT_USERNAME = "admin";
-const DEFAULT_PASSWORD_HASH = "1a036617a40acfcc487fa3c64d9b8a128d7dc63564332a61f2ba095efbca63d7";
+const DEFAULT_PASSWORD_HASH = "8cc0e1da31a80f886f51a5eea2e04584b5c44b88356c3c81d6c53e1fa401e021";
 const DEFAULT_SESSION_SECRET = "prime-motors-admin-session-2026-8f4d9c2a7e1b6f3d5a0c";
 
 function sessionConfig() {
