@@ -632,38 +632,3 @@
     display: none;
   }
 }
-
-.vextty-mark {
-  position: relative;
-  display: block;
-  width: 36px;
-  height: 32px;
-  flex: none;
-}
-
-.vextty-mark i {
-  position: absolute;
-  top: 2px;
-  width: 12px;
-  height: 28px;
-  border-radius: 4px 4px 7px 7px;
-  background: linear-gradient(180deg, #14c4ff, #0759ff);
-}
-
-.vextty-mark i:first-child {
-  left: 6px;
-  transform: skew(28deg);
-}
-
-.vextty-mark i:last-child {
-  right: 6px;
-  transform: skew(-28deg);
-  background: linear-gradient(180deg, #62d8ff, #0563ed);
-}
-
-.vextty-mark-small {
-  width: 25px;
-  height: 23px;
-  transform: scale(0.75);
-  transform-origin: center;
-}

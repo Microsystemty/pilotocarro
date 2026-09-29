@@ -74,23 +74,19 @@ export function SiteFooter() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Conheça a Vextty — Sistemas e Tecnologia"
-            className="group inline-flex w-fit items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="group inline-flex w-fit items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
               Desenvolvido por
             </span>
-            <span className="vextty-mark vextty-mark-small" aria-hidden="true">
-              <i />
-              <i />
-            </span>
-            <span className="leading-none">
-              <strong className="block text-sm font-bold tracking-[0.12em] text-foreground transition-colors group-hover:text-[#27bfff]">
-                VEXTTY
-              </strong>
-              <small className="block text-[7px] tracking-[0.22em] text-muted-foreground">
-                SISTEMAS &amp; TECNOLOGIA
-              </small>
-            </span>
+            <img
+              src="/vextty-logo.png"
+              alt="Vextty — Sistemas e Tecnologia"
+              width={2048}
+              height={1024}
+              loading="lazy"
+              className="h-12 w-36 rounded-md object-contain object-left transition duration-300 group-hover:brightness-125 sm:h-14 sm:w-44"
+            />
           </a>
         </div>
       </div>
