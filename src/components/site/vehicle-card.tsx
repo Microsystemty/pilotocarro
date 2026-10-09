@@ -19,13 +19,13 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const favorite = favorites.includes(vehicle.slug);
   const comparing = compare.includes(vehicle.slug);
   return (
-    <Card className="vehicle-card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border-border bg-card shadow-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-premium">
+    <Card className="vehicle-card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border-border/90 bg-card shadow-card transition duration-300 hover:-translate-y-1.5 hover:border-primary/60 hover:shadow-premium">
       <Link
         to="/estoque/$slug"
         params={{ slug: vehicle.slug }}
         aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}
       >
-        <div className="vehicle-card-premium__image relative aspect-[4/3] overflow-hidden bg-muted">
+        <div className="vehicle-card-premium__image relative aspect-[16/10] overflow-hidden bg-muted">
           <img
             src={vehicle.image}
             alt={`${vehicle.brand} ${vehicle.model}`}
@@ -50,7 +50,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
                 event.preventDefault();
                 toggleFavorite(vehicle.slug);
               }}
-              className="h-11 w-11 rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur hover:text-primary"
+              className="h-10 w-10 rounded-full border-white/10 bg-background/85 text-foreground shadow-lg backdrop-blur hover:text-primary sm:h-11 sm:w-11"
               aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             >
               <Heart className={`h-5 w-5 ${favorite ? "fill-primary text-primary" : ""}`} />
@@ -63,7 +63,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
                 event.preventDefault();
                 toggleCompare(vehicle.slug);
               }}
-              className={`h-11 w-11 rounded-full bg-background/90 shadow-lg backdrop-blur ${comparing ? "text-primary" : "text-foreground hover:text-primary"}`}
+              className={`h-10 w-10 rounded-full border-white/10 bg-background/85 shadow-lg backdrop-blur sm:h-11 sm:w-11 ${comparing ? "text-primary" : "text-foreground hover:text-primary"}`}
               aria-label={comparing ? "Remover da comparação" : "Adicionar à comparação"}
             >
               <Scale className="h-5 w-5" />
@@ -77,7 +77,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             <p className="truncate text-xs font-extrabold uppercase tracking-[0.16em] text-primary">
               {vehicle.brand}
             </p>
-            <h3 className="mt-1 truncate font-display text-xl font-extrabold text-foreground">
+            <h3 className="mt-1 truncate font-display text-xl font-extrabold leading-tight text-foreground sm:text-2xl">
               {vehicle.brand} {vehicle.model}
             </h3>
             <p className="mt-1 truncate text-sm text-muted-foreground">{vehicle.version}</p>
@@ -86,10 +86,10 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             {vehicle.body}
           </Badge>
         </div>
-         <p className="mt-5 font-sans text-2xl font-extrabold text-foreground">
+         <p className="mt-5 font-sans text-2xl font-extrabold tracking-tight text-foreground">
           {formatCurrency(vehicle.price)}
         </p>
-        <div className="mt-5 grid grid-cols-2 gap-3 text-sm text-muted-foreground">
+        <div className="mt-5 grid grid-cols-2 gap-x-3 gap-y-4 border-y border-border/70 py-4 text-sm text-muted-foreground">
           <span className="flex min-w-0 items-center gap-2">
             <CalendarDays className="h-4 w-4 shrink-0 text-primary" /> {vehicle.year}
           </span>
@@ -104,7 +104,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             {vehicle.additionalFuel ? ` + ${vehicle.additionalFuel}` : ""}
           </span>
         </div>
-         <Button asChild variant="premium" className="mt-auto w-full rounded-full font-bold">
+         <Button asChild variant="premium" className="mt-5 w-full rounded-full font-bold">
           <Link to="/estoque/$slug" params={{ slug: vehicle.slug }}>
             Ver detalhes
           </Link>

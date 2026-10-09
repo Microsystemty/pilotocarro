@@ -76,7 +76,7 @@
 :root {
   --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Playfair Display", ui-serif, Georgia, serif;
-  --radius: 0.75rem;
+  --radius: 1rem;
   --background: oklch(0.125 0.006 25);
   --foreground: oklch(0.985 0.002 25);
   --card: oklch(0.17 0.007 25);
@@ -189,6 +189,10 @@
 
   body {
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(circle at 8% 0%, oklch(0.59 0.225 28 / 9%), transparent 28rem),
+      radial-gradient(circle at 92% 38%, oklch(0.59 0.225 28 / 5%), transparent 32rem);
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-body);
     min-width: 320px;
@@ -222,6 +226,38 @@
   ::selection {
     background-color: var(--color-primary);
     color: var(--color-primary-foreground);
+  }
+}
+
+@layer components {
+  .section-shell {
+    width: min(100% - 2rem, 80rem);
+    margin-inline: auto;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .section-kicker::before {
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    content: "";
+  }
+
+  .glass-panel {
+    border: 1px solid oklch(0.99 0 0 / 9%);
+    background: linear-gradient(145deg, oklch(0.2 0.008 25 / 88%), oklch(0.145 0.006 25 / 94%));
+    box-shadow: 0 30px 80px -44px oklch(0 0 0 / 85%);
+    backdrop-filter: blur(18px);
   }
 }
 

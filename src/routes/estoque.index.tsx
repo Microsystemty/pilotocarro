@@ -95,8 +95,8 @@ function StockPage() {
         title="Encontre o veículo ideal para você."
         description="Consulte fotos, características e informações completas de cada veículo disponível."
       />
-      <section className="bg-background py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-background py-10 sm:py-16 lg:py-20">
+        <div className="section-shell">
           <VehicleFilters
             value={filters}
             onChange={setFilters}
@@ -112,7 +112,7 @@ function StockPage() {
             ]}
             bodies={[...new Set(visibleVehicles.map((v) => v.body))]}
           />
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
             <p className="text-sm text-muted-foreground">
               <strong className="text-foreground">{filteredVehicles.length}</strong> veículo(s)
               encontrado(s)
@@ -123,7 +123,7 @@ function StockPage() {
               </Button>
             )}
           </div>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {filteredVehicles.map((vehicle) => (
               <VehicleCard key={vehicle.slug} vehicle={vehicle} />
             ))}

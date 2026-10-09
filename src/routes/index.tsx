@@ -50,29 +50,29 @@ function Index() {
   const vehicleOfWeek = featuredVehicles[0] ?? visibleVehicles[0];
   return (
     <main>
-      <section className="relative min-h-[40rem] overflow-hidden bg-hero-gradient">
+      <section className="relative min-h-[42rem] overflow-hidden bg-hero-gradient lg:min-h-[46rem]">
         <img
           src={heroImage}
           alt="Sedan premium em uma concessionária moderna"
           width={1600}
           height={1000}
-          className="absolute inset-0 h-full w-full object-cover opacity-25"
+          className="absolute inset-0 h-full w-full scale-105 object-cover opacity-30"
         />
         <div className="absolute inset-0 bg-hero-overlay" />
         <div className="hero-light-sweep" />
-        <div className="relative mx-auto grid min-h-[40rem] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+        <div className="relative mx-auto grid min-h-[42rem] max-w-7xl items-center gap-8 px-4 pb-24 pt-12 sm:px-6 sm:pt-16 lg:min-h-[46rem] lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-28">
           <div className="hero-copy max-w-3xl py-8">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-hero-foreground shadow-soft">
               <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" /> Compra segura e sem
               complicação
             </p>
-            <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.6rem,9vw,3.9rem)] font-extrabold leading-[1.02] text-hero-foreground">
+            <h1 className="mt-6 max-w-3xl text-balance font-display text-[clamp(2.8rem,9vw,4.8rem)] font-extrabold leading-[0.98] text-hero-foreground">
               Seu próximo carro
               <span className="block">
                 merece ser <span className="hero-accent-text">inesquecível.</span>
               </span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-hero-muted">
+            <p className="mt-6 max-w-xl text-pretty text-base leading-7 text-hero-muted sm:text-lg sm:leading-8">
               Seminovos selecionados, atendimento próximo e todas as informações para você escolher
               com confiança.
             </p>
@@ -125,8 +125,8 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-surface px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-3xl border border-border bg-card p-5 shadow-premium sm:p-8">
+      <section className="relative z-10 border-b border-border bg-surface px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
+        <div className="glass-panel mx-auto -mt-8 max-w-7xl rounded-3xl p-5 sm:-mt-12 sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div className="w-full max-w-3xl">
               <div className="flex items-center gap-3">
@@ -191,15 +191,10 @@ function Index() {
         </div>
       </section>
 
-      <section className="bg-background py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-background py-16 sm:py-24 lg:py-28">
+        <div className="section-shell">
           <div className="max-w-3xl">
-            <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-primary" aria-hidden="true" />
-              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">
-                Últimas novidades
-              </p>
-            </div>
+            <p className="section-kicker">Últimas novidades</p>
             <h2 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">
               Destaques do nosso estoque
             </h2>
@@ -208,7 +203,7 @@ function Index() {
               ajudar.
             </p>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {featuredVehicles.map((vehicle) => (
               <VehicleCard key={vehicle.slug} vehicle={vehicle} />
             ))}
@@ -223,10 +218,11 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-surface py-16 sm:py-20">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-card sm:p-10">
-            <CarFront className="h-10 w-10 text-primary" aria-hidden="true" />
+      <section className="border-y border-border bg-surface py-16 sm:py-24">
+        <div className="section-shell grid gap-5 lg:grid-cols-2 lg:gap-7">
+          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-card transition hover:border-primary/50 hover:shadow-premium sm:p-10">
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/20" />
+            <CarFront className="relative h-10 w-10 text-primary" aria-hidden="true" />
             <h2 className="mt-6 text-3xl font-extrabold text-foreground">Venda seu carro</h2>
             <p className="mt-3 max-w-lg leading-7 text-muted-foreground">
               Faça uma avaliação rápida, segura e receba uma proposta transparente pelo seu veículo.
@@ -237,8 +233,9 @@ function Index() {
               </Link>
             </Button>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-card sm:p-10">
-            <HandCoins className="h-10 w-10 text-primary" aria-hidden="true" />
+          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-card transition hover:border-primary/50 hover:shadow-premium sm:p-10">
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/20" />
+            <HandCoins className="relative h-10 w-10 text-primary" aria-hidden="true" />
             <h2 className="mt-6 text-3xl font-extrabold text-foreground">Financie seu sonho</h2>
             <p className="mt-3 max-w-lg leading-7 text-muted-foreground">
               Compare possibilidades de financiamento e encontre parcelas que combinam com você.
@@ -253,12 +250,12 @@ function Index() {
       </section>
 
       {vehicleOfWeek && (
-        <section className="bg-background py-16 sm:py-24">
+        <section className="bg-background px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <div className="mx-auto grid max-w-7xl overflow-hidden rounded-3xl border border-border bg-card shadow-premium lg:grid-cols-2">
             <img
               src={vehicleOfWeek.image}
               alt={`${vehicleOfWeek.brand} ${vehicleOfWeek.model}`}
-              className="h-full min-h-80 w-full object-cover"
+              className="h-full min-h-72 w-full object-cover sm:min-h-96"
             />
             <div className="flex flex-col justify-center p-7 sm:p-12">
               <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-primary">

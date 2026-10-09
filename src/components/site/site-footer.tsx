@@ -5,10 +5,11 @@ import { useStoreSettings } from "@/hooks/use-store-settings";
 export function SiteFooter() {
   const { settings } = useStoreSettings();
   return (
-    <footer className="border-t-4 border-primary bg-surface text-surface-foreground">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-8">
+    <footer className="relative overflow-hidden border-t border-primary/60 bg-surface text-surface-foreground">
+      <div className="absolute -left-40 top-0 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-8 lg:py-18">
         <div>
-          <p className="font-display text-xl font-extrabold uppercase tracking-[0.16em]">
+          <p className="font-display text-2xl font-extrabold uppercase tracking-[0.14em]">
             {settings.name}
           </p>
           <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
@@ -18,7 +19,7 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-semibold uppercase text-foreground">Páginas</p>
           <nav
-            className="mt-4 grid gap-2 text-sm text-muted-foreground"
+            className="mt-4 grid gap-3 text-sm text-muted-foreground"
             aria-label="Links do rodapé"
           >
             <Link to="/a-loja" className="hover:text-foreground">

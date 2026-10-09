@@ -1,4 +1,5 @@
-import { RotateCcw, SlidersHorizontal } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,22 +51,45 @@ export function VehicleFilters({
   fuels: string[];
   bodies: string[];
 }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const update = (key: keyof VehicleFilterState, next: string | boolean) =>
     onChange({ ...value, [key]: next });
+  const activeCount = useMemo(
+    () =>
+      Object.entries(value).filter(([key, current]) => {
+        if (key === "sort") return current !== "featured";
+        if (key === "favoritesOnly") return current === true;
+        return current !== "all" && current !== "";
+      }).length,
+    [value],
+  );
   return (
     <section
-      className="rounded-xl border border-border bg-card p-4 shadow-card sm:p-5"
+      className="glass-panel rounded-2xl p-4 sm:p-5 lg:p-6"
       aria-label="Filtros de veículos"
     >
       <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-        <p className="flex items-center gap-2 font-bold text-foreground">
+        <button
+          type="button"
+          onClick={() => setMobileOpen((current) => !current)}
+          className="flex min-h-11 items-center gap-2 text-left font-bold text-foreground sm:pointer-events-none"
+          aria-expanded={mobileOpen}
+        >
           <SlidersHorizontal className="h-5 w-5 text-primary" /> Filtrar estoque
-        </p>
-        <Button variant="ghost" size="sm" onClick={() => onChange(emptyVehicleFilters)}>
-          <RotateCcw /> Limpar
-        </Button>
+          {activeCount > 0 && (
+            <span className="grid h-6 min-w-6 place-items-center rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
+              {activeCount}
+            </span>
+          )}
+          <ChevronDown className={`ml-1 h-4 w-4 transition sm:hidden ${mobileOpen ? "rotate-180" : ""}`} />
+        </button>
+        {activeCount > 0 && (
+          <Button variant="ghost" size="sm" onClick={() => onChange(emptyVehicleFilters)}>
+            <RotateCcw /> Limpar
+          </Button>
+        )}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={`${mobileOpen ? "grid" : "hidden"} gap-4 sm:grid sm:grid-cols-2 xl:grid-cols-4`}>
         <FilterSelect
           label="Marca"
           value={value.brand}
@@ -137,7 +161,7 @@ export function VehicleFilters({
           hideAll
         />
       </div>
-      <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-border px-3 text-sm font-medium text-muted-foreground focus-within:ring-2 focus-within:ring-ring">
+      <label className={`${mobileOpen ? "inline-flex" : "hidden"} mt-5 min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-border bg-background/40 px-4 text-sm font-medium text-muted-foreground focus-within:ring-2 focus-within:ring-ring sm:inline-flex`}>
         <input
           type="checkbox"
           checked={value.favoritesOnly}
