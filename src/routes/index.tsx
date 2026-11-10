@@ -10,8 +10,6 @@ import {
   Search,
   ShieldCheck,
 } from "lucide-react";
-import heroImage from "@/assets/auto-hero.jpg";
-import { AnimatedCarShowcase } from "@/components/site/animated-car-showcase";
 import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/site/vehicle-card";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
@@ -48,20 +46,18 @@ function Index() {
     .sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99))
     .slice(0, 3);
   const vehicleOfWeek = featuredVehicles[0] ?? visibleVehicles[0];
+  const stockCount = visibleVehicles.length;
+  const brandCount = new Set(visibleVehicles.map((vehicle) => vehicle.brand)).size;
   return (
     <main>
       <section className="relative min-h-[42rem] overflow-hidden bg-hero-gradient lg:min-h-[46rem]">
-        <img
-          src={heroImage}
-          alt="Sedan premium em uma concessionária moderna"
-          width={1600}
-          height={1000}
-          className="absolute inset-0 h-full w-full scale-105 object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-hero-overlay" />
+        <div className="hero-rings" aria-hidden="true" />
+        <div className="hero-giant" aria-hidden="true">
+          PRIME
+        </div>
         <div className="hero-light-sweep" />
-        <div className="relative mx-auto grid min-h-[42rem] max-w-7xl items-center gap-8 px-4 pb-24 pt-12 sm:px-6 sm:pt-16 lg:min-h-[46rem] lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-28">
-          <div className="hero-copy max-w-3xl py-8">
+        <div className="relative mx-auto flex min-h-[42rem] max-w-5xl flex-col items-center justify-center px-4 pb-24 pt-12 text-center sm:px-6 sm:pt-16 lg:min-h-[46rem] lg:px-8 lg:pb-28">
+          <div className="hero-copy mx-auto max-w-3xl py-8">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-hero-foreground shadow-soft">
               <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" /> Compra segura e sem
               complicação
@@ -72,11 +68,11 @@ function Index() {
                 merece ser <span className="hero-accent-text">inesquecível.</span>
               </span>
             </h1>
-            <p className="mt-6 max-w-xl text-pretty text-base leading-7 text-hero-muted sm:text-lg sm:leading-8">
+            <p className="mx-auto mt-6 max-w-xl text-pretty text-base leading-7 text-hero-muted sm:text-lg sm:leading-8">
               Seminovos selecionados, atendimento próximo e todas as informações para você escolher
               com confiança.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild variant="premium" size="lg" className="rounded-full px-8 font-bold">
                 <Link to="/estoque">
                   Ver estoque
@@ -88,23 +84,29 @@ function Index() {
                 message="Olá, quero conhecer os veículos disponíveis na Prime Motors."
               />
             </div>
-            <div className="hero-metrics mt-12 grid max-w-2xl grid-cols-3 gap-2 text-hero-muted sm:gap-3">
-              <div className="border-l border-hero-line pl-4">
-                <p className="font-sans text-sm font-bold text-hero-foreground">Seleção cuidadosa</p>
-                <p className="text-sm">para diferentes perfis</p>
+            <div className="mt-12 grid w-full max-w-3xl grid-cols-1 gap-4 rounded-3xl border border-hero-line/50 bg-hero-chip p-5 text-left shadow-soft backdrop-blur sm:grid-cols-3 sm:gap-6 sm:p-6">
+              <div>
+                <p className="flex items-center gap-2 font-display text-3xl font-extrabold text-hero-foreground">
+                  <CarFront className="h-6 w-6 text-primary" aria-hidden="true" />
+                  {stockCount}
+                </p>
+                <p className="mt-1 text-sm text-hero-muted">veículos em estoque</p>
               </div>
-              <div className="border-l border-hero-line pl-4">
-                <p className="font-sans text-sm font-bold text-hero-foreground">Informações claras</p>
-                <p className="text-sm">em cada anúncio</p>
+              <div>
+                <p className="flex items-center gap-2 font-display text-3xl font-extrabold text-hero-foreground">
+                  <BadgeCheck className="h-6 w-6 text-primary" aria-hidden="true" />
+                  {brandCount}
+                </p>
+                <p className="mt-1 text-sm text-hero-muted">marcas para escolher</p>
               </div>
-              <div className="border-l border-hero-line pl-4">
-                <p className="font-sans text-sm font-bold text-hero-foreground">Contato direto</p>
-                <p className="text-sm">pelos canais da loja</p>
+              <div>
+                <p className="flex items-center gap-2 font-display text-3xl font-extrabold text-hero-foreground">
+                  <ShieldCheck className="h-6 w-6 text-primary" aria-hidden="true" />
+                  Verificada
+                </p>
+                <p className="mt-1 text-sm text-hero-muted">procedência e documentação conferida</p>
               </div>
             </div>
-          </div>
-          <div>
-            <AnimatedCarShowcase />
           </div>
         </div>
         <div className="hero-ticker" aria-hidden="true">
